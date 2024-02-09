@@ -2,6 +2,7 @@ const word = document.querySelector('#word')
 const charGrid = document.querySelector('.charGrid')
 const error = document.querySelector('error')
 const loading = document.querySelector("loading")
+const counter = document.querySelector('#counter')
 const foundWords = []
 let retry = 30
 const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
@@ -36,14 +37,12 @@ function createRegex(chars, mainChar){
 async function fetchWords(chars, mainChar){
     const wordRegex = createRegex(chars,mainChar)
     try{
-        
-        const wordsFile= await fetch(wordsListUrl).then(x => x.text()).catch(alert)
+        const wordsFile= await fetch(wordsListUrl).then(x => x.text())
         const filteredWords = wordsFile.match(wordRegex)
         if(filteredWords?.length < 50 && filteredWords?.length > 10 ) return filteredWords.map(word=>word.toLowerCase())
     }catch(error){
         console.error(error.message)
-        alert(error)
-       setError( error.message )
+        setError( error.message )
     }finally{
      retry--
     }
@@ -100,6 +99,10 @@ function enableActions(chars,mainChar, wordsList){
         shuffleLetters(chars,mainChar)
     })
     
+    counter.addEventListener('click', ()=>{
+        reference.classList.toggle('show')
+    })
+    
 }
 
 function updateScore(){
@@ -124,7 +127,7 @@ function addToFound(words){
     }
 }
 function updateCounter (){
-    document.querySelector('#counter').innerHTML = `${foundWords.length}/${wordsList.length}`
+    counter.innerHTML = `${foundWords.length}/${wordsList.length}`
 }
 function win(){
     document.querySelector('win').style.display='block'

@@ -1,6 +1,7 @@
 :root{
   font-size:20px;
 }
+
 *{
   margin:0;
   padding:0;
@@ -120,4 +121,14 @@ interact{
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+}
+
+reference{
+  font-size:0.5rem;
+  display: 'none'
+}
+
+reference.show{
+  opacity:0.6;
+  display:'block'
 }

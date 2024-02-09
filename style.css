@@ -125,10 +125,10 @@ interact{
 
 reference{
   font-size:0.5rem;
-  display: 'none'
+  display: none
 }
 
 reference.show{
   opacity:0.6;
-  display:'block'
+  display:block
 }

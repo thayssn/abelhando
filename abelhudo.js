@@ -3,6 +3,7 @@ const charGrid = document.querySelector('.charGrid')
 const error = document.querySelector('error')
 const loading = document.querySelector("loading")
 const counter = document.querySelector('#counter')
+const reference = document.querySelector('reference')
 const foundWords = []
 let retry = 30
 const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]

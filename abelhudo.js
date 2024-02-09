@@ -4,13 +4,13 @@ const error = document.querySelector('error')
 const loading = document.querySelector("loading")
 const foundWords = []
 let retry = 30
-const allChars = ["a", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
+const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
-    a: 'aáâã',
-    e:'eéê',
+    a: 'aáâ',
+    e: 'eéê',
     i: 'ií',
-    o:'oóõô',
-    u:'uúü'
+    o: 'oóõô',
+    u: 'uúü'
 }
 
 function chooseChars(){
@@ -50,7 +50,7 @@ async function fetchWords(chars, mainChar){
 }
 function sanitize(str){
     return str
-    .replace(/[áãâ]/g, "a")
+    .replace(/[áâ]/g, "a")
     .replace(/[éê]/g,"e")
     .replace(/[í]/g, "i")
     .replace(/[óõô]/g,"o")
@@ -60,11 +60,12 @@ function sanitize(str){
 function enableActions(chars,mainChar, wordsList){
     function validateWord(word){
         if(!word || !word.length || word.length <= 3) throw new Error ("A palavra precisa ser maior.")
-        if(foundWords.includes(word)) throw new Error("Palavra já encontrada")
+
         if(!word.includes(mainChar)) throw new Error("Não possui a letra obrigatória.")
         const wordsToAdd = wordsList.filter(w=>{
             return sanitize(w) === word.toLowerCase()
         })
+        if(foundWords.filter(word => wordsToAdd.includes(word)).length) throw new Error("Palavra já encontrada")
         if(!wordsToAdd.length) throw new Error('Palavra não encontrada.')
         return wordsToAdd
     }
@@ -119,7 +120,7 @@ function addToFound(words){
     foundWords.push(...words)
     updateCounter()
     for(const word of words){
-        document.querySelector('.foundWords').insertAdjacentHTML('beforeend', `<span>${word}</span>`)
+        document.querySelector('.foundWords').insertAdjacentHTML('beforeend', `<word>${word}</word>`)
     }
 }
 function updateCounter (){
@@ -156,7 +157,7 @@ async function start(){
         return start()
     }
     if(!wordsList) return;
-    //document.querySelector('reference').innerHTML=wordsList.join(' | ')
+    document.querySelector('reference').innerHTML=wordsList.join(' | ')
     updateCounter()
     renderLetters(chars, mainChar)
     enableActions(chars, mainChar, wordsList)

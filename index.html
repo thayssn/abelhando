@@ -11,21 +11,23 @@
   <script defer src="./abelhudo.js"></script>
 </head>
 <body>
-  <!--<reference></reference>-->
+  <reference></reference>
   <div id="counter"></div>
   <div id="word"></div>
-  <win>Parabéns! Você encontrou todas as palavras. 
-  </win>
+  <win>Parabéns! Você encontrou todas as palavras.</win>
+  
   <error></error>
+  <interact>
+   <div class="foundWords"></div>
   <div class="charGrid"></div>
   <actionGroup>
-  <action id="reset">Reset</action>
-  <action id="delete">Delete</action>
-  <action id="shuffle">Shuffle</action>
-  <action id="enter">Enter</action>
-  <loading></loading>
+  <action id="reset">↻</action>
+  <action id="delete">⌫</action>
+  <action id="shuffle">⚛</action>
+  <action id="enter">⤴</action>
  </actionGroup>
     
-  <div class="foundWords"></div>
+  </interact>
+ <loading></loading>
 </body>
 </html>

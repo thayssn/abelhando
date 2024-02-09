@@ -1,0 +1,160 @@
+const word = document.querySelector('#word')
+const charGrid = document.querySelector('.charGrid')
+const error = document.querySelector('error')
+const foundWords = []
+let retry = 20
+const allChars = ["a", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
+const charMap = {
+    a: 'aáâã',
+    e:'eéê',
+    i: 'ií',
+    o:'oóõô',
+    u:'uúü'
+}
+
+function chooseChars(){
+    const alternatives = [...allChars]
+    const chars = Array(7)
+    .fill()
+    .map(() => {
+        const chosen = alternatives.splice(random(alternatives.length-1), 1)
+        return chosen
+    })
+    
+    const mainChar = chars[random(chars.length-1)]
+    return [chars, mainChar]
+}
+const wordsListUrl = 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt'
+//'https://raw.githubusercontent.com/fserb/pt-br/master/dicio'
+//if(!wordRegex.test(word)) throw new Error('Inválido')
+function createRegex(chars, mainChar){
+    const charsRegex = chars.map(char => charMap[char]??char).join('')
+    const mainCharRegex = charMap[mainChar]??mainChar
+    return new RegExp(`^(?=[${charsRegex}]*${mainCharRegex}+)[${charsRegex}]{4,}$`,'gim')
+}
+
+async function fetchWords(chars, mainChar){
+    const wordRegex = createRegex(chars,mainChar)
+    try{
+        retry--
+        const wordsFile= await fetch(wordsListUrl).then(x => x.text())
+        const filteredWords = wordsFile.match(wordRegex)
+        if(filteredWords?.length < 50 && filteredWords?.length > 10 ) return filteredWords.map(word=>word.toLowerCase())
+    }catch(error){
+        console.error(error.message)
+       error.innerHTML = error.message 
+    }
+}
+function sanitize(str){
+    return str
+    .replace(/[áãâ]/g, "a")
+    .replace(/[éê]/g,"e")
+    .replace(/[í]/g, "i")
+    .replace(/[óõô]/g,"o")
+    .replace(/[ú]/g, "u")
+}
+
+function enableActions(chars,mainChar, wordsList){
+    function validateWord(word){
+        if(!word || !word.length || word.length <= 3) throw new Error ("A palavra precisa ser maior.")
+        if(foundWords.includes(word)) throw new Error("Palavra já encontrada")
+        if(!word.includes(mainChar)) throw new Error("Não possui a letra obrigatória.")
+        const wordsToAdd = wordsList.filter(w=>{
+            return sanitize(w) === word.toLowerCase()
+        })
+        if(!wordsToAdd.length) throw new Error('Palavra não encontrada.')
+        return wordsToAdd
+    }
+
+
+
+    document.querySelector('#enter').addEventListener('click', ()=>{
+        const candidateWord= word.innerHTML
+        try{
+            const wordsFound = validateWord(candidateWord)
+            addToFound(wordsFound)
+            updateScore()
+        }catch(error){
+            setError(error.message)
+        }finally{
+            setWord('')
+        }
+    })
+
+
+    document.querySelector('#delete').addEventListener('click', ()=>{
+        const currentWord = word.innerHTML
+        setWord(currentWord.substring(0, currentWord.length-1))
+    })
+
+
+    document.querySelector('#reset').addEventListener('click', ()=>{
+        setWord('')
+    })
+    
+    document.querySelector('#shuffle').addEventListener('click', ()=>{
+        shuffleLetters(chars,mainChar)
+    })
+    
+}
+
+function updateScore(){
+    if(foundWords.length === wordsList.length){
+        win()
+    }
+}
+function setWord (newWord) {word.innerHTML=newWord}
+function setError (message) {
+    if(message) {
+        setTimeout(()=>{
+            setError('')
+        },1000)
+    }
+    error.innerHTML=message
+}
+function addToFound(words){
+    foundWords.push(...words)
+    updateCounter()
+    for(const word of words){
+        document.querySelector('.foundWords').insertAdjacentHTML('beforeend', `<span>${word}</span>`)
+    }
+}
+function updateCounter (){
+    document.querySelector('#counter').innerHTML = `${foundWords.length}/${wordsList.length}`
+}
+function win(){
+    document.querySelector('win').style.display='block'
+}
+function renderLetters(chars, mainChar){
+    charGrid.innerHTML=''
+    chars.forEach(char =>{
+    const el = document.createElement('div')
+    el.classList.add('char', String(char) == String(mainChar) ? 'mandatory': 'optional')
+    el.innerHTML = char
+    el.addEventListener('click',()=>{
+        word.innerHTML+= char
+    })
+    charGrid.append(el)
+})
+}
+function shuffleLetters(chars, mainChar){
+    const letters = [...chars]
+    const shuffled = chars.map(()=>letters.splice(random(letters.length),1))
+    renderLetters(shuffled, mainChar)
+}
+function random(multiplier){
+    return Math.floor(Math.random()*multiplier)
+}
+async function start(){
+    const [chars, mainChar]=chooseChars()
+    wordsList = await fetchWords(chars, mainChar)
+    if(retry > 0 && !wordsList) {
+        error.innerHTML = 'Tentativa:' +( 20 - retry)
+        return start()
+    }
+    document.querySelector('reference').innerHTML=wordsList.join(' | ')
+    updateCounter()
+    renderLetters(chars, mainChar)
+    enableActions(chars, mainChar, wordsList)
+}
+start()

@@ -1,0 +1,77 @@
+body{
+  width:100%;
+}
+
+.char{
+  padding: 2em;
+  text-transform: uppercase;
+  background: #feffad;
+}
+.char:active{
+  background: red;
+}
+
+.char.mandatory{
+  background: #ccf099;
+}
+
+.charGrid{
+  display:flex;
+  flex-wrap: wrap;
+  gap:1rem;
+  justify-content: center;
+}
+
+#word{
+  margin:1rem;
+  background: #efefef;
+  padding:2em;
+  min-height: 1em;
+  text-align: center;
+  font-size: 1.5em;
+  text-transform: uppercase;
+}
+
+error{
+  display: block;
+  color: red;
+  width:100%;
+  text-align: center;
+  padding:0.5em;
+  margin:1rem;
+}
+
+.foundWords{
+  margin:1rem;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.foundWords span{
+  margin: 2rem;
+  font-style: italic;
+  text-transform: capitalize;
+}
+
+win{
+  width:100%;
+  display:none;
+  color:green;
+  padding:1rem;
+  text-align: center;
+}
+
+
+actionGroup{
+  display:flex;
+  gap:1rem;
+  margin:1rem;
+}
+
+action{
+  flex:1;
+  padding:0.5em;
+  colo:white;
+  text-align: center;
+  background-color:#f560c9;
+}

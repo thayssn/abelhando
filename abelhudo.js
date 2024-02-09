@@ -1,8 +1,9 @@
 const word = document.querySelector('#word')
 const charGrid = document.querySelector('.charGrid')
 const error = document.querySelector('error')
+const loading = document.querySelector("loading")
 const foundWords = []
-let retry = 20
+let retry = 30
 const allChars = ["a", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
     a: 'aáâã',
@@ -24,9 +25,8 @@ function chooseChars(){
     const mainChar = chars[random(chars.length-1)]
     return [chars, mainChar]
 }
+//const wordsListUrl = 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt'
 const wordsListUrl = 'br-utf8.txt'
-//'https://raw.githubusercontent.com/fserb/pt-br/master/dicio'
-//if(!wordRegex.test(word)) throw new Error('Inválido')
 function createRegex(chars, mainChar){
     const charsRegex = chars.map(char => charMap[char]??char).join('')
     const mainCharRegex = charMap[mainChar]??mainChar
@@ -36,13 +36,16 @@ function createRegex(chars, mainChar){
 async function fetchWords(chars, mainChar){
     const wordRegex = createRegex(chars,mainChar)
     try{
-        retry--
-        const wordsFile= await fetch(wordsListUrl).then(x => x.text())
+        
+        const wordsFile= await fetch(wordsListUrl).then(x => x.text()).catch(alert)
         const filteredWords = wordsFile.match(wordRegex)
         if(filteredWords?.length < 50 && filteredWords?.length > 10 ) return filteredWords.map(word=>word.toLowerCase())
     }catch(error){
         console.error(error.message)
-       error.innerHTML = error.message 
+        alert(error)
+       setError( error.message )
+    }finally{
+     retry--
     }
 }
 function sanitize(str){
@@ -149,12 +152,14 @@ async function start(){
     const [chars, mainChar]=chooseChars()
     wordsList = await fetchWords(chars, mainChar)
     if(retry > 0 && !wordsList) {
-        error.innerHTML = 'Tentativa:' +( 20 - retry)
+        loading.innerHTML = 'Tentativa:' +( 30 - retry)
         return start()
     }
-    document.querySelector('reference').innerHTML=wordsList.join(' | ')
+    if(!wordsList) return;
+    //document.querySelector('reference').innerHTML=wordsList.join(' | ')
     updateCounter()
     renderLetters(chars, mainChar)
     enableActions(chars, mainChar, wordsList)
+    loading.remove()
 }
 start()

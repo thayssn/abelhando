@@ -24,7 +24,7 @@ function chooseChars(){
     const mainChar = chars[random(chars.length-1)]
     return [chars, mainChar]
 }
-const wordsListUrl = 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt'
+const wordsListUrl = 'br-utf8.txt'
 //'https://raw.githubusercontent.com/fserb/pt-br/master/dicio'
 //if(!wordRegex.test(word)) throw new Error('Inválido')
 function createRegex(chars, mainChar){

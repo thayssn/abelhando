@@ -3,8 +3,15 @@ const charGrid = document.querySelector('.charGrid')
 const error = document.querySelector('error')
 const loading = document.querySelector("loading")
 const counter = document.querySelector('#counter')
+const tierRange = document.querySelector('#tierRange')
 const reference = document.querySelector('reference')
-const foundWords = []
+function select(query){
+    return document.querySelector(query)
+}
+let foundWords = []
+let totalLetters = 0
+let foundLetters = 0
+let tiers = []
 let retry = 30
 const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
@@ -40,12 +47,12 @@ async function fetchWords(chars, mainChar){
     try{
         const wordsFile= await fetch(wordsListUrl).then(x => x.text())
         const filteredWords = wordsFile.match(wordRegex)
-        if(filteredWords?.length < 50 && filteredWords?.length > 10 ) return filteredWords.map(word=>word.toLowerCase())
+        if(filteredWords?.length < 50 && filteredWords?.length > 15 ) return filteredWords.map(word=>word.toLowerCase())
     }catch(error){
         console.error(error.message)
         setError( error.message )
     }finally{
-     retry--
+        retry--
     }
 }
 function sanitize(str){
@@ -69,8 +76,6 @@ function enableActions(chars,mainChar, wordsList){
         if(!wordsToAdd.length) throw new Error('Palavra não encontrada.')
         return wordsToAdd
     }
-
-
 
     document.querySelector('#enter').addEventListener('click', ()=>{
         const candidateWord= word.innerHTML
@@ -103,10 +108,17 @@ function enableActions(chars,mainChar, wordsList){
     counter.addEventListener('click', ()=>{
         reference.classList.toggle('show')
     })
-    
 }
 
 function updateScore(){
+    const range = tiers.reduce((tier, [k,v]) => {
+        if(foundLetters >= v) tier++
+        return tier
+    }, 0)
+    console.log(range)
+    tierRange.value = range
+    tierRange.dataset.range = range
+    tierRange.dataset.label = tiers[range-1]?.[0] ?? ''
     if(foundWords.length === wordsList.length){
         win()
     }
@@ -120,16 +132,34 @@ function setError (message) {
     }
     error.innerHTML=message
 }
+
 function addToFound(words){
     foundWords.push(...words)
+    foundLetters += countLetters(words)
     updateCounter()
     for(const word of words){
         document.querySelector('.foundWords').insertAdjacentHTML('beforeend', `<word>${word}</word>`)
     }
 }
+
 function updateCounter (){
+    select('#letters').innerHTML=`${foundLetters}/${totalLetters}`
     counter.innerHTML = `${foundWords.length}/${wordsList.length}`
 }
+
+function getTiers(count){
+    const calc = x => Math.floor(count * x)
+    return [
+        ['Iniciante', Math.max(1, calc(0.03))],
+        ['Mediano', Math.max(2, calc(0.5))],
+        ['Bom', Math.max(3,calc(0.1))],
+        ['Ótimo', Math.max(5, calc(0.2))],
+        ['Excelente', Math.max(7, (calc(0.5)))],
+        ['Dominante', Math.max(9, calc(0.8))],
+        ['Genial', calc(1)]
+    ]
+}
+
 function win(){
     document.querySelector('win').style.display='block'
 }
@@ -153,6 +183,12 @@ function shuffleLetters(chars, mainChar){
 function random(multiplier){
     return Math.floor(Math.random()*multiplier)
 }
+function countLetters(words){
+   return words.reduce((total, word)=>{
+        const count = word.length === 4 ? 1 : word.length
+        return total + count;
+    }, 0)
+}
 async function start(){
     const [chars, mainChar]=chooseChars()
     wordsList = await fetchWords(chars, mainChar)
@@ -161,10 +197,14 @@ async function start(){
         return start()
     }
     if(!wordsList) return;
-    document.querySelector('reference').innerHTML=wordsList.join(' | ')
-    updateCounter()
+    
+    totalLetters = countLetters(wordsList)
     renderLetters(chars, mainChar)
     enableActions(chars, mainChar, wordsList)
+    tiers = getTiers(totalLetters)
+    document.querySelector('reference').innerHTML=wordsList.join(' | ')
+    updateCounter()
     loading.remove()
+    
 }
 start()

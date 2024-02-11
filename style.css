@@ -1,5 +1,6 @@
 :root{
   font-size:20px;
+  font-family: sans-serif;
 }
 
 *{
@@ -28,8 +29,10 @@ body{
 .char:active{
   background: #FCD25C;
 }
-
 .char.mandatory{
+  background-color: #FCD25C
+}
+.char.mandatory:active{
   background: #F89E66;
 }
 
@@ -63,8 +66,7 @@ error{
   margin:1rem 0;
   display: flex;
   flex-wrap: wrap;
-  font-size: 0.9rem;
-  flwx-grow:1;
+  font-size: 0.6rem;
 }
 
 .foundWords word{
@@ -78,11 +80,24 @@ error{
 }
 
 win{
-  width:100%;
+  max-width:100%;
   display:none;
   color:green;
   padding:1rem;
   text-align: center;
+}
+#tierRange{
+  pointer-events: none;
+  background-color: red;
+  position:relative;
+}
+
+#tierRange:after{
+  position:absolute;
+  top: 100%;
+  content:attr(data-label);
+  color: #FCD25C;
+  font-weight: bolder;
 }
 
 actionGroup{

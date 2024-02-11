@@ -12,7 +12,10 @@ let foundWords = []
 let totalLetters = 0
 let foundLetters = 0
 let tiers = []
-let retry = 30
+const MAX_RETRIES = 50
+let retry = MAX_RETRIES
+const MIN_WORDS  = 10
+const MAX_WORDS = 70
 const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
     a: 'aáâ',
@@ -47,7 +50,7 @@ async function fetchWords(chars, mainChar){
     try{
         const wordsFile= await fetch(wordsListUrl).then(x => x.text())
         const filteredWords = wordsFile.match(wordRegex)
-        if(filteredWords?.length < 50 && filteredWords?.length > 15 ) return filteredWords.map(word=>word.toLowerCase())
+        if(filteredWords?.length < MAX_WORDS && filteredWords?.length > MIN_WORDS ) return filteredWords.map(word=>word.toLowerCase())
     }catch(error){
         console.error(error.message)
         setError( error.message )
@@ -118,7 +121,7 @@ function updateScore(){
     console.log(range)
     tierRange.value = range
     tierRange.dataset.range = range
-    tierRange.dataset.label = tiers[range-1]?.[0] ?? ''
+    tierRange.dataset.label = tiers[range-1][0]
     if(foundWords.length === wordsList.length){
         win()
     }
@@ -150,12 +153,12 @@ function updateCounter (){
 function getTiers(count){
     const calc = x => Math.floor(count * x)
     return [
-        ['Iniciante', Math.max(1, calc(0.03))],
-        ['Mediano', Math.max(2, calc(0.5))],
-        ['Bom', Math.max(3,calc(0.1))],
-        ['Ótimo', Math.max(5, calc(0.2))],
-        ['Excelente', Math.max(7, (calc(0.5)))],
-        ['Dominante', Math.max(9, calc(0.8))],
+        ['Iniciante', Math.max(0, calc(0.03))],
+        ['Mediano', Math.max(1, calc(0.05))],
+        ['Bom', Math.max(2,calc(0.1))],
+        ['Ótimo', Math.max( calc(0.3))],
+        ['Excelente', Math.max( (calc(0.5)))],
+        ['Dominante', Math.max( calc(0.8))],
         ['Genial', calc(1)]
     ]
 }
@@ -193,7 +196,7 @@ async function start(){
     const [chars, mainChar]=chooseChars()
     wordsList = await fetchWords(chars, mainChar)
     if(retry > 0 && !wordsList) {
-        loading.innerHTML = 'Tentativa:' +( 30 - retry)
+        loading.innerHTML = 'Tentativa:' + (MAX_RETRIES - retry)
         return start()
     }
     if(!wordsList) return;

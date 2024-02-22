@@ -116,17 +116,19 @@ function enableActions(chars,mainChar, wordsList){
 }
 
 function updateScore(){
-    const label = tiers.reduce((label, [k,v], i) => {
-        if(foundLetters >= v) return k
-        return label
-    }, 'Iniciante')
+    const [label, index] = tiers.reduce((final, [k,v], i) => {
+        if(foundLetters >= v) return [k, i]
+        return final
+    }, ['Iniciante', 0])
     select('#tierLabel').innerHTML = label
     select('tier').style.width = Math.ceil(foundLetters / totalLetters * 100) + '%'
-    select('tier').classList.remove('active')
-    select('tier').classList.add('active')
+    select('tier, next').classList.remove('active')
+    select('tier, next').classList.add('active')
     if(foundWords.length === wordsList.length){
-        win()
+       return win()
     }
+    select('next').style.width = Math.ceil(tiers[index + 1][1]/totalLetters * 100) + '%'
+    
 }
 function setWord (newWord) {word.innerHTML=newWord}
 function setError (message) {
@@ -207,7 +209,9 @@ async function start(){
     renderLetters(chars, mainChar)
     enableActions(chars, mainChar, wordsList)
     tiers = getTiers(totalLetters)
+    console.log(tiers[1][1])
     document.querySelector('reference').innerHTML=wordsList.join(' | ')
+    select('next').style.width = Math.ceil(tiers[1][1]/totalLetters * 100) + '%'
     updateCounter()
     loading.remove()
 }

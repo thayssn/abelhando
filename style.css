@@ -145,17 +145,26 @@ reference.show{
   background: #efefef;
   justify-content:center;
   position: relative;
+  height:10px;
 }
 
 tier{
   display: block;
   background-color: var(--yellow);
-  height:10px;
-  width:2px;
+  width:1px;
 }
 
+next.active,
 tier.active{
   transition: width 0.3s;
+}
+
+next{
+  width:1px;
+  height:100%;
+  background: var(--yellow);
+  opacity:0.4;
+  position: absolute;
 }
 
 #tierLabel{

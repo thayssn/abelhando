@@ -8,13 +8,16 @@ const reference = document.querySelector('reference')
 function select(query){
     return document.querySelector(query)
 }
+const local = window.location.protocol === 'file:'
+console.log(local)
+const wordsListUrl = local ? 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt' : 'br-utf8.txt'
 let foundWords = []
 let totalLetters = 0
 let foundLetters = 0
 let tiers = []
 const MAX_RETRIES = 50
 let retry = MAX_RETRIES
-const MIN_WORDS  = 14
+const MIN_WORDS = 20
 const MAX_WORDS = 50
 const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
@@ -37,8 +40,6 @@ function chooseChars(){
     const mainChar = chars[random(chars.length-1)]
     return [chars, mainChar]
 }
-//const wordsListUrl = 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt'
-const wordsListUrl = 'br-utf8.txt'
 
 function createRegex(chars, mainChar){
     const charsRegex = chars.map(char => charMap[char]??char).join('')
@@ -115,13 +116,14 @@ function enableActions(chars,mainChar, wordsList){
 }
 
 function updateScore(){
-    const range = tiers.reduce((tier, [k,v]) => {
-        if(foundLetters >= v) return tier + 1
-        return tier
-    }, 1)
-    tierRange.value = range
-    tierRange.dataset.range = range
-    tierRange.dataset.label = tiers[range][0]
+    const label = tiers.reduce((label, [k,v], i) => {
+        if(foundLetters >= v) return k
+        return label
+    }, 'Iniciante')
+    select('#tierLabel').innerHTML = label
+    select('tier').style.width = Math.ceil(foundLetters / totalLetters * 100) + '%'
+    select('tier').classList.remove('active')
+    select('tier').classList.add('active')
     if(foundWords.length === wordsList.length){
         win()
     }
@@ -153,13 +155,13 @@ function updateCounter (){
 function getTiers(count){
     const calc = x => Math.floor(count * x)
     return [
-        ['Iniciante', Math.max(2, calc(0.03))],
-        ['Mediano', Math.max(4, calc(0.05))],
+        ['Iniciante', 0],
+        ['Mediano', Math.max(3, calc(0.05))],
         ['Bom', Math.max(6,calc(0.1))],
-        ['Ótimo', Math.max(8,calc(0.3))],
-        ['Excelente', Math.max(10,(calc(0.5)))],
-        ['Dominante', Math.max(12,calc(0.8))],
-        ['Genial', 14,calc(1)]
+        ['Ótimo', Math.max(9,calc(0.3))],
+        ['Excelente', Math.max(12,(calc(0.5)))],
+        ['Dominante', Math.max(15,calc(0.8))],
+        ['Genial', Math.max(20, calc(1))]
     ]
 }
 
@@ -208,6 +210,5 @@ async function start(){
     document.querySelector('reference').innerHTML=wordsList.join(' | ')
     updateCounter()
     loading.remove()
-    
 }
 start()

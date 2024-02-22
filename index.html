@@ -14,21 +14,26 @@
   <reference></reference>
   <div id="counter"></div>
   <div id="letters"></div>
-  <input type="range" id="tierRange" min=1 max=7 step=1 data-range=1 data-label="Iniciante" value=0></input>
+  
+  <div id="tiers">
+    <!--<input type="range" id="tierRange" min=1 max=7 step=1 data-range=1 data-label="Iniciante" value=0 />-->
+    <tier></tier>
+    <div id="tierLabel">Iniciante</div>
+  </div>
+
   <div id="word"></div>
   <win>Parabéns! Você encontrou todas as palavras.</win>
   
   <error></error>
   <interact>
-   <div class="foundWords"></div>
-  <div class="charGrid"></div>
-  <actionGroup>
-  <action id="reset">↻</action>
-  <action id="delete">⌫</action>
-  <action id="shuffle">⚛</action>
-  <action id="enter">⤴</action>
- </actionGroup>
-    
+    <div class="foundWords"></div>
+    <div class="charGrid"></div>
+    <actionGroup>
+      <action id="reset">↻</action>
+      <action id="delete">⌫</action>
+      <action id="shuffle">⚛</action>
+      <action id="enter">⤴</action>
+    </actionGroup> 
   </interact>
  <loading></loading>
 </body>

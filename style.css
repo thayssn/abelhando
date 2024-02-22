@@ -1,6 +1,7 @@
 :root{
   font-size:20px;
   font-family: sans-serif;
+  --yellow: #FCD25C;
 }
 
 *{
@@ -86,19 +87,6 @@ win{
   padding:1rem;
   text-align: center;
 }
-#tierRange{
-  pointer-events: none;
-  background-color: red;
-  position:relative;
-}
-
-#tierRange:after{
-  position:absolute;
-  top: 100%;
-  content:attr(data-label);
-  color: #FCD25C;
-  font-weight: bolder;
-}
 
 actionGroup{
   width:100%;
@@ -148,4 +136,31 @@ reference{
 reference.show{
   opacity:0.6;
   display:block
+}
+
+#tiers{
+  width:100%;
+  background:green;
+  display:flex;
+  background: #efefef;
+  justify-content:center;
+  position: relative;
+}
+
+tier{
+  display: block;
+  background-color: var(--yellow);
+  height:10px;
+  width:2px;
+}
+
+tier.active{
+  transition: width 0.3s;
+}
+
+#tierLabel{
+  position:absolute;
+  bottom: calc(100% + 0.5rem);
+  color: var(--yellow);
+  font-weight: bolder;
 }

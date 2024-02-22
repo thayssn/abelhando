@@ -14,8 +14,8 @@ let foundLetters = 0
 let tiers = []
 const MAX_RETRIES = 50
 let retry = MAX_RETRIES
-const MIN_WORDS  = 10
-const MAX_WORDS = 70
+const MIN_WORDS  = 14
+const MAX_WORDS = 50
 const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
     a: 'aáâ',
@@ -39,6 +39,7 @@ function chooseChars(){
 }
 //const wordsListUrl = 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt'
 const wordsListUrl = 'br-utf8.txt'
+
 function createRegex(chars, mainChar){
     const charsRegex = chars.map(char => charMap[char]??char).join('')
     const mainCharRegex = charMap[mainChar]??mainChar
@@ -115,13 +116,12 @@ function enableActions(chars,mainChar, wordsList){
 
 function updateScore(){
     const range = tiers.reduce((tier, [k,v]) => {
-        if(foundLetters >= v) tier++
+        if(foundLetters >= v) return tier + 1
         return tier
-    }, 0)
-    console.log(range)
+    }, 1)
     tierRange.value = range
     tierRange.dataset.range = range
-    tierRange.dataset.label = tiers[range-1][0]
+    tierRange.dataset.label = tiers[range][0]
     if(foundWords.length === wordsList.length){
         win()
     }
@@ -153,13 +153,13 @@ function updateCounter (){
 function getTiers(count){
     const calc = x => Math.floor(count * x)
     return [
-        ['Iniciante', Math.max(0, calc(0.03))],
-        ['Mediano', Math.max(1, calc(0.05))],
-        ['Bom', Math.max(2,calc(0.1))],
-        ['Ótimo', Math.max( calc(0.3))],
-        ['Excelente', Math.max( (calc(0.5)))],
-        ['Dominante', Math.max( calc(0.8))],
-        ['Genial', calc(1)]
+        ['Iniciante', Math.max(2, calc(0.03))],
+        ['Mediano', Math.max(4, calc(0.05))],
+        ['Bom', Math.max(6,calc(0.1))],
+        ['Ótimo', Math.max(8,calc(0.3))],
+        ['Excelente', Math.max(10,(calc(0.5)))],
+        ['Dominante', Math.max(12,calc(0.8))],
+        ['Genial', 14,calc(1)]
     ]
 }
 

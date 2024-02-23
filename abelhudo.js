@@ -85,22 +85,22 @@ function enableActions(chars,mainChar, wordsList){
     document.querySelector('#enter').addEventListener('click', ()=>{
         const candidateWord= word.innerHTML
         try{
-            const wordsFound = validateWord(candidateWord)
-            addToFound(wordsFound)
-            updateScore()
+              const wordsFound = validateWord(candidateWord)
+              const lettersFound = countLetters(wordsFound)
+              addToFound(wordsFound, lettersFound)
+              updateScore(lettersFound)
+              showScore(lettersFound)
         }catch(error){
             setError(error.message)
         }finally{
             setWord('')
         }
     })
-
-
+    
     document.querySelector('#delete').addEventListener('click', ()=>{
         const currentWord = word.innerHTML
         setWord(currentWord.substring(0, currentWord.length-1))
     })
-
 
     document.querySelector('#reset').addEventListener('click', ()=>{
         setWord('')
@@ -127,6 +127,7 @@ function updateScore(){
     if(foundWords.length === wordsList.length){
        return win()
     }
+    console.log(tiers[index + 1][1])
     select('next').style.width = Math.ceil(tiers[index + 1][1]/totalLetters * 100) + '%'
     
 }
@@ -140,9 +141,9 @@ function setError (message) {
     error.innerHTML=message
 }
 
-function addToFound(words){
+function addToFound(words, letters){
     foundWords.push(...words)
-    foundLetters += countLetters(words)
+    foundLetters += letters
     updateCounter()
     for(const word of words){
         document.querySelector('.foundWords').insertAdjacentHTML('beforeend', `<word>${word}</word>`)
@@ -166,7 +167,15 @@ function getTiers(count){
         ['Genial', Math.max(20, calc(1))]
     ]
 }
-
+function showScore(letters){
+    const score = document.createElement("score")
+    score.innerHTML='+'+letters
+    console.log(score)
+    select("#tiers").append(score)
+    setTimeout(() =>{
+       score.remove() 
+    }, 1000)
+}
 function win(){
     document.querySelector('win').style.display='block'
 }
@@ -196,6 +205,7 @@ function countLetters(words){
         return total + count;
     }, 0)
 }
+
 async function start(){
     const [chars, mainChar]=chooseChars()
     wordsList = await fetchWords(chars, mainChar)
@@ -215,4 +225,6 @@ async function start(){
     updateCounter()
     loading.remove()
 }
+
+
 start()

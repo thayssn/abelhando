@@ -1,8 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Anton&family=Raleway:ital,wght@1,700&family=Roboto+Slab:wght@200;300&display=swap');
+
 :root{
-  font-size:20px;
+  font-family: "ABeeZee", sans-serif;
+  font-size: 6vw;
   font-family: sans-serif;
   --yellow: #FCD25C;
-  --gray: #D6D6D6;
+  --gray: #e6e6e6;
+  --dark: #343437;
+  --orange: rgb(252, 188, 92);
+  --reddish: #f76257;
 }
 
 *{
@@ -12,27 +18,26 @@
 
 body{
   max-width:100%;
-  color: #212121;
+  color: var(--dark);
   display:flex;
   flex-direction: column;
   height:100vh;
 }
 
 .char{
-  --full-size:80px;
-  --half-size: 40px;
-  --quarter-size:20px;
+  --full-size: 20vw;
+  --half-size: calc(var(--full-size) / 2);
+  --quarter-size: calc(var(--full-size) / 4);
   --custom-size: calc(var(--half-size) * 0.65);
   --color: var(--gray);
-  display:block;
-  width:var(--full-size);
-  line-height:var(--half-size);
-  height:var(--half-size);
-  vertical-align: middle;
+  display: block;
+  width: var(--full-size);
+  line-height: var(--half-size);
+  height: var(--half-size);
   text-align: center;
   text-transform: uppercase;
   background: var(--color);
-  position:relative;
+  position: relative;
   margin-bottom: var(--custom-size);
 }
 
@@ -73,14 +78,14 @@ body{
 .char.mandatory:active:before,
 .char.mandatory:active:after{
   
-  --color: #F89E66;
+  --color: var(--orange);
 }
 
 .charGrid{
   max-width: 100%;
   display:flex;
   flex-wrap: wrap;
-  gap:10px;
+  gap:0.5rem;
   justify-content: center;
   margin: 1.5rem 0;
 }
@@ -88,7 +93,7 @@ body{
 #word{
   max-width: 100%;
   overflow: hidden;
-  margin-top:0.5em;
+  margin-top: 1em;
   min-height:1.5em;
   text-align: center;
   font-size: 1.5em;
@@ -97,18 +102,20 @@ body{
 
 error{
   display: block;
-  color: red;
+  color: var(--reddish);
   width:100%;
   text-align: center;
+  font-size: 0.8rem;
   min-height:2em;
 }
 
 .foundWords{
   max-width: 100%;
+  padding: 0.5rem;
   margin:1rem 0;
   display: flex;
   flex-wrap: wrap;
-  font-size: 0.6rem;
+  font-size: 0.5rem;
 }
 
 .foundWords word{
@@ -131,23 +138,18 @@ win{
 
 actionGroup{
   width:100%;
-  margin:10px 0;
+  margin:1rem 0;
   display:flex;
   justify-content: space-around;
 }
 
 action{
   display:block;
-  width:3rem;
-  height:3rem;
-  line-height:3rem;
-  vertical-align: center;
-  color:white;
   text-align: center;
-  background-color:#343436;
   text-transform: uppercase;
   font-weight:bold;
-  font-size: 1.4rem;
+  font-size: 0.6rem;
+  border: 1px solid var(--gray)
 }
 action:active{
   opacity:0.7;
@@ -160,7 +162,32 @@ loading{
   position:absolute;
   top:0;
   left:0;
-  background-color: #FCD25C;
+  background-color: var(--yellow);
+  font-size: 0.5rem;
+  font-style: italic;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+loading.failed{
+  background-color: var(--reddish);
+  transition: background-color 0.7s;
+}
+
+loadding.failed #retries{
+  animation: fadeup 2s 0 ;
+}
+
+loading.failed img{
+  display: none;
+}
+
+loading img{
+  width: 150px;
+  flex-shrink: 0;
 }
 
 interact{
@@ -251,9 +278,9 @@ next{
 }
 
 score{
-  font-size:1.8rem;
+  font-size:1.5rem;
   font-weight: bold;
-  color: var(--yellow);
+  color: var(--orange);
   animation: fadeup 0.6s ease-in;
   animation-fill-mode: forwards;
   position:absolute;
@@ -261,9 +288,9 @@ score{
 
 @keyframes fadeup{
   from{
-    top: 0;
+    top: 50%;
     opacity:100%;
-    transform: scale(1)
+    transform: scale(1.2)
   }
   to{
     top:-100%;

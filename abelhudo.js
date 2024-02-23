@@ -1,21 +1,33 @@
-const word = document.querySelector('#word')
-const charGrid = document.querySelector('.charGrid')
-const error = document.querySelector('error')
-const loading = document.querySelector("loading")
-const counter = document.querySelector('#counter')
-const tierRange = document.querySelector('#tierRange')
-const reference = document.querySelector('reference')
+const loadingPhrases = [
+    "procurando as letras",
+    "se preparando para pousar",
+    "cheirando flores",
+    "voando para a colmeia",
+    "preparando o mel",
+    "trabalhando",
+    "carregando o pólen",
+    "coletando néctar",
+    "lendo um livro",
+    "arrumando a colmeia",
+    "juntando as palavras"
+];
 function select(query){
     return document.querySelector(query)
 }
+const word = select('#word')
+const charGrid = select('.charGrid')
+const error = select('error')
+const loading = select("loading")
+const counter = select('#counter')
+const tierRange = select('#tierRange')
+const reference = select('reference')
 const local = window.location.protocol === 'file:'
-console.log(local)
 const wordsListUrl = local ? 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt' : 'br-utf8.txt'
 let foundWords = []
 let totalLetters = 0
 let foundLetters = 0
 let tiers = []
-const MAX_RETRIES = 50
+const MAX_RETRIES = loadingPhrases.length * 3;
 let retry = MAX_RETRIES
 const MIN_WORDS = 20
 const MAX_WORDS = 50
@@ -47,18 +59,15 @@ function createRegex(chars, mainChar){
     return new RegExp(`^(?=[${charsRegex}]*${mainCharRegex}+)[${charsRegex}]{4,}$`,'gim')
 }
 
-async function fetchWords(chars, mainChar){
+
+function filterWords(wordsFile, chars, mainChar){
     const wordRegex = createRegex(chars,mainChar)
-    try{
-        const wordsFile= await fetch(wordsListUrl).then(x => x.text())
-        const filteredWords = wordsFile.match(wordRegex)
-        if(filteredWords?.length < MAX_WORDS && filteredWords?.length > MIN_WORDS ) return filteredWords.map(word=>word.toLowerCase())
-    }catch(error){
-        console.error(error.message)
-        setError( error.message )
-    }finally{
-        retry--
+    const filteredWords = wordsFile.match(wordRegex)
+    if( filteredWords?.length < MAX_WORDS &&
+        filteredWords?.length > MIN_WORDS ){
+        return filteredWords.map(word=>word.toLowerCase())
     }
+    retry--
 }
 function sanitize(str){
     return str
@@ -82,14 +91,13 @@ function enableActions(chars,mainChar, wordsList){
         return wordsToAdd
     }
 
-    document.querySelector('#enter').addEventListener('click', ()=>{
+    select('#enter').addEventListener('click', ()=>{
         const candidateWord= word.innerHTML
         try{
               const wordsFound = validateWord(candidateWord)
               const lettersFound = countLetters(wordsFound)
               addToFound(wordsFound, lettersFound)
-              updateScore(lettersFound)
-              showScore(lettersFound)
+              updateScore(wordsList, lettersFound)
         }catch(error){
             setError(error.message)
         }finally{
@@ -97,16 +105,16 @@ function enableActions(chars,mainChar, wordsList){
         }
     })
     
-    document.querySelector('#delete').addEventListener('click', ()=>{
+    select('#delete').addEventListener('click', ()=>{
         const currentWord = word.innerHTML
         setWord(currentWord.substring(0, currentWord.length-1))
     })
 
-    document.querySelector('#reset').addEventListener('click', ()=>{
+    select('#reset').addEventListener('click', ()=>{
         setWord('')
     })
     
-    document.querySelector('#shuffle').addEventListener('click', ()=>{
+    select('#shuffle').addEventListener('click', ()=>{
         shuffleLetters(chars,mainChar)
     })
     
@@ -115,7 +123,10 @@ function enableActions(chars,mainChar, wordsList){
     })
 }
 
-function updateScore(){
+function updateScore(wordsList, lettersFound){
+    updateCounter(wordsList)
+    renderScore(lettersFound)
+
     const [label, index] = tiers.reduce((final, [k,v], i) => {
         if(foundLetters >= v) return [k, i]
         return final
@@ -124,14 +135,18 @@ function updateScore(){
     select('tier').style.width = Math.ceil(foundLetters / totalLetters * 100) + '%'
     select('tier, next').classList.remove('active')
     select('tier, next').classList.add('active')
+
     if(foundWords.length === wordsList.length){
        return win()
     }
-    console.log(tiers[index + 1][1])
     select('next').style.width = Math.ceil(tiers[index + 1][1]/totalLetters * 100) + '%'
-    
+
 }
-function setWord (newWord) {word.innerHTML=newWord}
+
+function setWord (newWord) {
+    word.innerHTML=newWord
+}
+
 function setError (message) {
     if(message) {
         setTimeout(()=>{
@@ -144,13 +159,12 @@ function setError (message) {
 function addToFound(words, letters){
     foundWords.push(...words)
     foundLetters += letters
-    updateCounter()
     for(const word of words){
-        document.querySelector('.foundWords').insertAdjacentHTML('beforeend', `<word>${word}</word>`)
+        select('.foundWords').insertAdjacentHTML('beforeend', `<word>${word}</word>`)
     }
 }
 
-function updateCounter (){
+function updateCounter (wordsList){
     select('#letters').innerHTML=`${foundLetters}/${totalLetters}`
     counter.innerHTML = `${foundWords.length}/${wordsList.length}`
 }
@@ -167,38 +181,43 @@ function getTiers(count){
         ['Genial', Math.max(20, calc(1))]
     ]
 }
-function showScore(letters){
+
+function renderScore(letters){
     const score = document.createElement("score")
     score.innerHTML='+'+letters
-    console.log(score)
     select("#tiers").append(score)
     setTimeout(() =>{
        score.remove() 
     }, 1000)
 }
+
 function win(){
-    document.querySelector('win').style.display='block'
+    select('win').style.display='block'
 }
+
 function renderLetters(chars, mainChar){
     charGrid.innerHTML=''
     chars.forEach(char =>{
-    const el = document.createElement('div')
-    el.classList.add('char', String(char) == String(mainChar) ? 'mandatory': 'optional')
-    el.innerHTML = char
-    el.addEventListener('click',()=>{
-        word.innerHTML+= char
+        const el = document.createElement('div')
+        el.classList.add('char', String(char) == String(mainChar) ? 'mandatory': 'optional')
+        el.innerHTML = char
+        el.addEventListener('click',()=>{
+            word.innerHTML+= char
+        })
+        charGrid.append(el)
     })
-    charGrid.append(el)
-})
 }
+
 function shuffleLetters(chars, mainChar){
     const letters = [...chars]
     const shuffled = chars.map(()=>letters.splice(random(letters.length),1))
     renderLetters(shuffled, mainChar)
 }
+
 function random(multiplier){
     return Math.floor(Math.random()*multiplier)
 }
+
 function countLetters(words){
    return words.reduce((total, word)=>{
         const count = word.length === 4 ? 1 : word.length
@@ -206,25 +225,43 @@ function countLetters(words){
     }, 0)
 }
 
-async function start(){
+function setup(wordsFile){
     const [chars, mainChar]=chooseChars()
-    wordsList = await fetchWords(chars, mainChar)
+    const wordsList = filterWords(wordsFile, chars, mainChar);
     if(retry > 0 && !wordsList) {
-        loading.innerHTML = 'Tentativa:' + (MAX_RETRIES - retry)
-        return start()
+        const retryPhrase = Math.floor(Math.random() * loadingPhrases.length)
+        select('#retries').innerHTML = "... as abelhas estão " + loadingPhrases[retryPhrase] + " ...";
+        setTimeout(() => {
+            setup(wordsFile)
+        }, Math.max(200, Math.random() * 400))
+        return
     }
-    if(!wordsList) return;
-    
+    if(!wordsList || !wordsList.length) {
+        return showLoadingError()
+    };
     totalLetters = countLetters(wordsList)
     renderLetters(chars, mainChar)
     enableActions(chars, mainChar, wordsList)
     tiers = getTiers(totalLetters)
-    console.log(tiers[1][1])
-    document.querySelector('reference').innerHTML=wordsList.join(' | ')
+    select('reference').innerHTML=wordsList.join(' | ')
     select('next').style.width = Math.ceil(tiers[1][1]/totalLetters * 100) + '%'
-    updateCounter()
+    updateCounter(wordsList)
     loading.remove()
 }
 
+function showLoadingError(){
+    select('#retries').innerHTML = "Sinto muito! Tente novamente mais tarde."
+    loading.classList.add('failed')
+    return;
+}
+
+async function start(){
+
+    const wordsFile = await fetch(wordsListUrl).then(x => x.text()).catch(() => {
+        return showLoadingError()
+    })
+
+    setup(wordsFile)
+}
 
 start()

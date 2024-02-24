@@ -17,7 +17,6 @@
     <div id="letters"></div>
   </div>
   <div id="tiers">
-    <!--<input type="range" id="tierRange" min=1 max=7 step=1 data-range=1 data-label="Iniciante" value=0 />-->
     <tier></tier>
     <next></next>
     <div id="tierLabel">Iniciante</div>
@@ -31,10 +30,34 @@
     <div class="foundWords"></div>
     <div class="charGrid"></div>
     <actionGroup>
-      <action id="reset">Resetar</action>
-      <action id="delete">Deletar</action>
-      <action id="shuffle">Embaralhar</action>
-      <action id="enter">Enviar</action>
+      <action id="reset">Limpar</action>
+      <shuffle id="shuffle">
+        <svg viewBox="123.4335 62.5808 94.371 115.169" width="94.371" height="115.169">
+          <g transform="matrix(1, 0, 0, 1, 51.81151998043059, -11.822728216648116)">
+            <g>
+              <g transform="matrix(1, 0, 0, 1, -1.212994, -0.612503)">
+                <path d="M 131.542 90.952 L 131.542 90.973 L 131.57 90.988 L 131.542 90.988 L 131.542 122.582 L 131.372 122.582 L 102.304 138.734 L 73.237 122.582 L 73.174 122.582 L 73.174 122.547 L 73.089 122.5 L 73.174 122.5 L 73.174 90.988 L 72.835 90.988 L 102.203 75.016 L 131.504 90.952 L 131.542 90.952 Z" style="fill: rgb(216, 216, 216);"></path>
+                <path d="M 167.178 142.403 L 167.178 142.424 L 167.206 142.439 L 167.178 142.439 L 167.178 174.033 L 167.008 174.033 L 137.94 190.185 L 108.873 174.033 L 108.81 174.033 L 108.81 173.998 L 108.725 173.951 L 108.81 173.951 L 108.81 142.439 L 108.471 142.439 L 137.839 126.467 L 167.14 142.403 L 167.178 142.403 Z" style="fill: rgb(216, 216, 216);"></path>
+              </g>
+              <g>
+                <path style="stroke: rgb(0, 0, 0); fill: none; stroke-dashoffset: 3px; stroke-miterlimit: 5.83; stroke-width: 5px; transform-origin: 146.497px 110.683px;" d="M 138.018 99.12 C 138.358 120.675 154.976 122.243 154.976 122.243" transform="matrix(-1, 0, 0, -1, 0.000027, -0.000001)"></path>
+                <path d="M 154.466 122.332 L 160.395 130.35 L 148.538 130.35 L 154.466 122.332 Z" style="stroke: rgb(0, 0, 0); transform-box: fill-box; transform-origin: 50% 50%;" transform="matrix(-1, 0, 0, -1, 0.000038, 0.000005)"></path>
+                <path style="stroke: rgb(0, 0, 0); fill: none; stroke-dashoffset: 3px; stroke-width: 5px; transform-origin: 91.118px 153.293px;" d="M 82.639 141.73 C 82.979 163.285 99.597 164.853 99.597 164.853"></path>
+                <path d="M 83.148 133.626 L 89.077 141.644 L 77.22 141.644 L 83.148 133.626 Z" style="stroke: rgb(0, 0, 0); transform-box: fill-box; transform-origin: 50% 50%;"></path>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </shuffle>
+      <actions>
+      <action id="delete">
+        <svg  viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M17.23 9.78L15.01 12L17.23 14.22C17.52 14.51 17.52 14.99 17.23 15.28C17.08 15.43 16.89 15.5 16.7 15.5C16.51 15.5 16.32 15.43 16.17 15.28L13.95 13.06L11.73 15.28C11.58 15.43 11.39 15.5 11.2 15.5C11.01 15.5 10.82 15.43 10.67 15.28C10.38 14.99 10.38 14.51 10.67 14.22L12.89 12L10.67 9.78C10.38 9.49 10.38 9.01 10.67 8.72C10.96 8.43 11.44 8.43 11.73 8.72L13.95 10.94L16.17 8.72C16.46 8.43 16.94 8.43 17.23 8.72C17.52 9.01 17.52 9.49 17.23 9.78ZM21.32 7V17C21.32 17.96 20.54 18.75 19.57 18.75H7.64C7.02999 18.75 6.48 18.44 6.16 17.93L2.87 12.66C2.62 12.26 2.62 11.74 2.87 11.33L6.16 6.07C6.48 5.56 7.04 5.25 7.64 5.25H19.58C20.54 5.25 21.33 6.04 21.33 7H21.32ZM19.82 7C19.82 6.86 19.71 6.75 19.57 6.75H7.64C7.54999 6.75 7.47 6.79 7.43 6.87L4.22 12L7.43 17.13C7.48 17.2 7.56 17.25 7.64 17.25H19.58C19.72 17.25 19.83 17.14 19.83 17V7H19.82Z" fill="#000000"/>
+        </svg>
+      </action>
+      <action id="enter">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 14a1 1 0 0 1 1-1h12a3 3 0 0 0 3-3V6a1 1 0 1 1 2 0v4a5 5 0 0 1-5 5H4a1 1 0 0 1-1-1z" fill="#0D0D0D"/><path fill-rule="evenodd" clip-rule="evenodd" d="M3.293 14.707a1 1 0 0 1 0-1.414l4-4a1 1 0 0 1 1.414 1.414L5.414 14l3.293 3.293a1 1 0 1 1-1.414 1.414l-4-4z" fill="#0D0D0D"/></svg>      </action>
+      </actions>
     </actionGroup> 
   </interact>
  <loading>

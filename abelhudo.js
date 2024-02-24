@@ -59,7 +59,6 @@ function createRegex(chars, mainChar){
     return new RegExp(`^(?=[${charsRegex}]*${mainCharRegex}+)[${charsRegex}]{4,}$`,'gim')
 }
 
-
 function filterWords(wordsFile, chars, mainChar){
     const wordRegex = createRegex(chars,mainChar)
     const filteredWords = wordsFile.match(wordRegex)

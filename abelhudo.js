@@ -25,18 +25,18 @@ const local = window.location.protocol === 'file:'
 const wordsListUrl = local ? 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt' : 'br-utf8.txt'
 let foundWords = []
 let totalLetters = 0
-let foundLetters = 0
+let letterScore = 0
 let tiers = []
 const MAX_RETRIES = loadingPhrases.length * 3;
 let retry = MAX_RETRIES
 const MIN_WORDS = 20
 const MAX_WORDS = 50
-const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
+const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "õ", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
     a: 'aáâ',
     e: 'eéê',
     i: 'ií',
-    o: 'oóõô',
+    o: 'oóô',
     u: 'uúü'
 }
 
@@ -77,23 +77,37 @@ function sanitize(str){
     .replace(/[ú]/g, "u")
 }
 
-function enableActions(chars,mainChar, wordsList){
-    function validateWord(word){
-        if(!word || !word.length || word.length <= 3) throw new Error ("A palavra precisa ser maior.")
+function validateWord(word, mainChar, wordsList){
+    if(!word || !word.length || word.length <= 3) throw new Error ("A palavra precisa ser maior.")
 
-        if(!word.includes(mainChar)) throw new Error("Não possui a letra obrigatória.")
-        const wordsToAdd = wordsList.filter(w=>{
-            return sanitize(w) === word.toLowerCase()
-        })
-        if(foundWords.filter(word => wordsToAdd.includes(word)).length) throw new Error("Palavra já encontrada")
-        if(!wordsToAdd.length) throw new Error('Palavra não encontrada.')
-        return wordsToAdd
-    }
+    if(!word.includes(mainChar)) throw new Error("Não possui a letra obrigatória.")
+    const wordsToAdd = wordsList.filter(w=>{
+        return sanitize(w) === word.toLowerCase()
+    })
+    if(foundWords.filter(word => wordsToAdd.includes(word)).length) throw new Error("Palavra já encontrada")
+    if(!wordsToAdd.length) throw new Error('Palavra não encontrada.')
+    return wordsToAdd
+}
 
+function enableActions(chars, mainChar, wordsList){
+    select("#share").addEventListener('click', () => {
+        const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras! Quantas você consegue fazer?`;
+        const shareUrl = 'https://thayssn.github.io/abelhando/';
+        const whatsappUrl =  `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
+        window.location.href = whatsappUrl;
+    });
+
+    select("help .share").addEventListener('click', () => {
+        const dataText = "Dê uma olhada nesse jogo! Forme palavras para alcançar o maior nível.";
+        const shareUrl = 'https://thayssn.github.io/abelhando/';
+        const whatsappUrl =  `whatsapp://send?text=${encodeURIComponent(dataText)}%20${encodeURIComponent(shareUrl)}`;
+        window.location.href = whatsappUrl;
+    });
+    
     select('#enter').addEventListener('click', ()=>{
         const candidateWord= word.innerHTML
         try{
-              const wordsFound = validateWord(candidateWord)
+              const wordsFound = validateWord(candidateWord, mainChar, wordsList)
               const lettersFound = countLetters(wordsFound)
               addToFound(wordsFound, lettersFound)
               updateScore(wordsList, lettersFound)
@@ -120,6 +134,13 @@ function enableActions(chars,mainChar, wordsList){
     counter.addEventListener('click', ()=>{
         reference.classList.toggle('show')
     })
+    select("#help").addEventListener("click", () => {
+        select("help").classList.add("show");
+    })
+
+    select("#close").addEventListener("click", () => {
+        select("help").classList.remove("show")
+    })
 }
 
 function updateScore(wordsList, lettersFound){
@@ -127,11 +148,11 @@ function updateScore(wordsList, lettersFound){
     renderScore(lettersFound)
 
     const [label, index] = tiers.reduce((final, [k,v], i) => {
-        if(foundLetters >= v) return [k, i]
+        if(letterScore >= v) return [k, i]
         return final
     }, ['Iniciante', 0])
     select('#tierLabel').innerHTML = label
-    select('tier').style.width = Math.ceil(foundLetters / totalLetters * 100) + '%'
+    select('tier').style.width = Math.ceil(letterScore / totalLetters * 100) + '%'
     select('tier, next').classList.remove('active')
     select('tier, next').classList.add('active')
 
@@ -157,14 +178,14 @@ function setError (message) {
 
 function addToFound(words, letters){
     foundWords.push(...words)
-    foundLetters += letters
+    letterScore += letters
     for(const word of words){
         select('.foundWords').insertAdjacentHTML('beforeend', `<word>${word}</word>`)
     }
 }
 
 function updateCounter (wordsList){
-    select('#letters').innerHTML=`${foundLetters}/${totalLetters}`
+    select('#letters').innerHTML=`${letterScore}/${totalLetters}`
     counter.innerHTML = `${foundWords.length}/${wordsList.length}`
 }
 
@@ -242,10 +263,21 @@ function setup(wordsFile){
     renderLetters(chars, mainChar)
     enableActions(chars, mainChar, wordsList)
     tiers = getTiers(totalLetters)
+    setHelpTiers(tiers)
     select('reference').innerHTML=wordsList.join(' | ')
     select('next').style.width = Math.ceil(tiers[1][1]/totalLetters * 100) + '%'
     updateCounter(wordsList)
     loading.remove()
+}
+
+function setHelpTiers(){
+    const helpTiers = select("#helpTiers");
+    tiers.map(([tier, points]) => {
+        const tierElement = document.createElement('li');
+        tierElement.innerHTML = `<div class="tier">${tier}</div><div class="points">${points}</div>`
+        helpTiers.append(tierElement)
+    })
+
 }
 
 function showLoadingError(){

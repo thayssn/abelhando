@@ -371,8 +371,9 @@ help .container{
   padding: 1.4rem 0.5rem;
   position: relative;
   background: white;
-  box-shadow: 5px 5px 15px solid rgba(0,0,0,.5);
+  box-shadow: 3px 3px 5px rgba(0,0,0,.2);
   width: 80vw;
+  border-radius: 5px;
 }
 
 help h2{
@@ -382,13 +383,6 @@ help h2{
 
 help h3{
   margin: 0.7rem 0;
-}
-
-#close{
-  position: absolute;
-  right: 0;
-  top: 0;
-  margin: 1rem;
 }
 
 ul,li{
@@ -404,6 +398,7 @@ ul,li{
 action.share{
   padding: 0.4rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
@@ -413,6 +408,15 @@ action.share svg{
   max-height: 1rem;
 }
 
+#close{
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 0.5rem;
+  padding: 0.3rem;
+  width: 1rem;
+  height: 1rem;
+}
 
 @keyframes fadeup{
   from{

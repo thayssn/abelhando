@@ -7,6 +7,7 @@
   font-weight:400;
   --yellow: #FCD25C;
   --gray: #e6e6e6;
+  --border-gray: #d6d6d6;
   --dark: #343437;
   --orange: rgb(252, 188, 92);
   --reddish: #f76257;
@@ -162,7 +163,7 @@ action{
   text-transform: uppercase;
   font-weight:bold;
   font-size: 0.6rem;
-  border: 1px solid var(--gray);
+  border: 1px solid var(--border-gray);
   border-radius: 5px;
   margin-top: 0.4rem;
 }
@@ -263,7 +264,7 @@ reference.show{
 
 #counters{
   font-style: italic;
-  padding:10px 10px 15px;
+  padding:0.5rem 0.5rem 0.8rem;
   display: flex;
   font-size: 0.85rem;
   justify-content: space-between;
@@ -308,7 +309,7 @@ svg#help, svg#share{
   background: #efefef;
   justify-content:center;
   position: relative;
-  height:10px;
+  height:0.6rem;
 }
 
 tier{
@@ -367,7 +368,7 @@ help.show{
 }
 
 help .container{
-  border: 1px solid var(--gray);
+  border: 1px solid var(--border-gray);
   padding: 1.4rem 0.5rem;
   position: relative;
   background: white;

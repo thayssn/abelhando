@@ -27,6 +27,7 @@ let foundWords = []
 let totalLetters = 0
 let letterScore = 0
 let tiers = []
+let currentTier = "Iniciante";
 const MAX_RETRIES = loadingPhrases.length * 3;
 let retry = MAX_RETRIES
 const MIN_WORDS = 20
@@ -91,7 +92,7 @@ function validateWord(word, mainChar, wordsList){
 
 function enableActions(chars, mainChar, wordsList){
     select("#share").addEventListener('click', () => {
-        const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras! Quantas você consegue fazer?`;
+        const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras e cheguei ao nível "${currentTier}"! Até onde você consegue chegar?`;
         const shareUrl = 'https://thayssn.github.io/abelhando/';
         const whatsappUrl =  `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
         window.location.href = whatsappUrl;
@@ -151,6 +152,7 @@ function updateScore(wordsList, lettersFound){
         if(letterScore >= v) return [k, i]
         return final
     }, ['Iniciante', 0])
+    currentTier = label;
     select('#tierLabel').innerHTML = label
     select('tier').style.width = Math.ceil(letterScore / totalLetters * 100) + '%'
     select('tier, next').classList.remove('active')

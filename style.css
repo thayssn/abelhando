@@ -431,3 +431,8 @@ action.share svg{
     transform: scale(0.5)
   }
 }
+
+adplace{
+  width: 100%;
+  height: 2.2rem;
+}

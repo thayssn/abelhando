@@ -11,7 +11,7 @@ const loadingPhrases = [
     "arrumando a colmeia",
     "juntando as palavras"
 ];
-function select(query){
+function select(query) {
     return document.querySelector(query)
 }
 const word = select('#word')
@@ -41,98 +41,98 @@ const charMap = {
     u: 'uúü'
 }
 
-function chooseChars(){
+function chooseChars() {
     const alternatives = [...allChars]
     const chars = Array(7)
-    .fill()
-    .map(() => {
-        const chosen = alternatives.splice(random(alternatives.length-1), 1)
-        return chosen
-    })
-    
-    const mainChar = chars[random(chars.length-1)]
+        .fill()
+        .map(() => {
+            const chosen = alternatives.splice(random(alternatives.length - 1), 1)
+            return chosen
+        })
+
+    const mainChar = chars[random(chars.length - 1)]
     return [chars, mainChar]
 }
 
-function createRegex(chars, mainChar){
-    const charsRegex = chars.map(char => charMap[char]??char).join('')
-    const mainCharRegex = charMap[mainChar]??mainChar
-    return new RegExp(`^(?=[${charsRegex}]*${mainCharRegex}+)[${charsRegex}]{4,}$`,'gim')
+function createRegex(chars, mainChar) {
+    const charsRegex = chars.map(char => charMap[char] ?? char).join('')
+    const mainCharRegex = charMap[mainChar] ?? mainChar
+    return new RegExp(`^(?=[${charsRegex}]*${mainCharRegex}+)[${charsRegex}]{4,}$`, 'gim')
 }
 
-function filterWords(wordsFile, chars, mainChar){
-    const wordRegex = createRegex(chars,mainChar)
+function filterWords(wordsFile, chars, mainChar) {
+    const wordRegex = createRegex(chars, mainChar)
     const filteredWords = wordsFile.match(wordRegex)
-    if( filteredWords?.length < MAX_WORDS &&
-        filteredWords?.length > MIN_WORDS ){
-        return filteredWords.map(word=>word.toLowerCase())
+    if (filteredWords?.length < MAX_WORDS &&
+        filteredWords?.length > MIN_WORDS) {
+        return filteredWords.map(word => word.toLowerCase())
     }
     retry--
 }
-function sanitize(str){
+function sanitize(str) {
     return str
-    .replace(/[áâ]/g, "a")
-    .replace(/[éê]/g,"e")
-    .replace(/[í]/g, "i")
-    .replace(/[óõô]/g,"o")
-    .replace(/[ú]/g, "u")
+        .replace(/[áâ]/g, "a")
+        .replace(/[éê]/g, "e")
+        .replace(/[í]/g, "i")
+        .replace(/[óõô]/g, "o")
+        .replace(/[ú]/g, "u")
 }
 
-function validateWord(word, mainChar, wordsList){
-    if(!word || !word.length || word.length <= 3) throw new Error ("A palavra precisa ser maior.")
+function validateWord(word, mainChar, wordsList) {
+    if (!word || !word.length || word.length <= 3) throw new Error("A palavra precisa ser maior.")
 
-    if(!word.includes(mainChar)) throw new Error("Não possui a letra obrigatória.")
-    const wordsToAdd = wordsList.filter(w=>{
+    if (!word.includes(mainChar)) throw new Error("Não possui a letra obrigatória.")
+    const wordsToAdd = wordsList.filter(w => {
         return sanitize(w) === word.toLowerCase()
     })
-    if(foundWords.filter(word => wordsToAdd.includes(word)).length) throw new Error("Palavra já encontrada")
-    if(!wordsToAdd.length) throw new Error('Palavra não encontrada.')
+    if (foundWords.filter(word => wordsToAdd.includes(word)).length) throw new Error("Palavra já encontrada")
+    if (!wordsToAdd.length) throw new Error('Palavra não encontrada.')
     return wordsToAdd
 }
 
-function enableActions(chars, mainChar, wordsList){
+function enableActions(chars, mainChar, wordsList) {
     select("#share").addEventListener('click', () => {
         const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras e cheguei ao nível "${currentTier}"! Até onde você consegue chegar?`;
         const shareUrl = 'https://thayssn.github.io/abelhando/';
-        const whatsappUrl =  `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
+        const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
         window.location.href = whatsappUrl;
     });
 
     select("help .share").addEventListener('click', () => {
         const dataText = "Dê uma olhada nesse jogo! Forme palavras para alcançar o maior nível.";
         const shareUrl = 'https://thayssn.github.io/abelhando/';
-        const whatsappUrl =  `whatsapp://send?text=${encodeURIComponent(dataText)}%20${encodeURIComponent(shareUrl)}`;
+        const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(dataText)}%20${encodeURIComponent(shareUrl)}`;
         window.location.href = whatsappUrl;
     });
-    
-    select('#enter').addEventListener('click', ()=>{
-        const candidateWord= word.innerHTML
-        try{
-              const wordsFound = validateWord(candidateWord, mainChar, wordsList)
-              const lettersFound = countLetters(wordsFound)
-              addToFound(wordsFound, lettersFound)
-              updateScore(wordsList, lettersFound)
-        }catch(error){
+
+    select('#enter').addEventListener('click', () => {
+        const candidateWord = word.innerHTML
+        try {
+            const wordsFound = validateWord(candidateWord, mainChar, wordsList)
+            const lettersFound = countLetters(wordsFound)
+            addToFound(wordsFound, lettersFound)
+            updateScore(wordsList, lettersFound)
+        } catch (error) {
             setError(error.message)
-        }finally{
+        } finally {
             setWord('')
         }
     })
-    
-    select('#delete').addEventListener('click', ()=>{
+
+    select('#delete').addEventListener('click', () => {
         const currentWord = word.innerHTML
-        setWord(currentWord.substring(0, currentWord.length-1))
+        setWord(currentWord.substring(0, currentWord.length - 1))
     })
 
-    select('#reset').addEventListener('click', ()=>{
+    select('#reset').addEventListener('click', () => {
         setWord('')
     })
-    
-    select('#shuffle').addEventListener('click', ()=>{
-        shuffleLetters(chars,mainChar)
+
+    select('#shuffle').addEventListener('click', () => {
+        shuffleLetters(chars, mainChar)
     })
-    
-    counter.addEventListener('click', ()=>{
+
+    counter.addEventListener('click', () => {
         reference.classList.toggle('show')
     })
     select("#help").addEventListener("click", () => {
@@ -144,12 +144,12 @@ function enableActions(chars, mainChar, wordsList){
     })
 }
 
-function updateScore(wordsList, lettersFound){
+function updateScore(wordsList, lettersFound) {
     updateCounter(wordsList)
     renderScore(lettersFound)
 
-    const [label, index] = tiers.reduce((final, [k,v], i) => {
-        if(letterScore >= v) return [k, i]
+    const [label, index] = tiers.reduce((final, [k, v], i) => {
+        if (letterScore >= v) return [k, i]
         return final
     }, ['Iniciante', 0])
     currentTier = label;
@@ -158,99 +158,99 @@ function updateScore(wordsList, lettersFound){
     select('tier, next').classList.remove('active')
     select('tier, next').classList.add('active')
 
-    if(foundWords.length === wordsList.length){
-       return win()
+    if (foundWords.length === wordsList.length) {
+        return win()
     }
-    select('next').style.width = Math.ceil(tiers[index + 1][1]/totalLetters * 100) + '%'
+    select('next').style.width = Math.ceil(tiers[index + 1][1] / totalLetters * 100) + '%'
 
 }
 
-function setWord (newWord) {
-    word.innerHTML=newWord
+function setWord(newWord) {
+    word.innerHTML = newWord
 }
 
-function setError (message) {
-    if(message) {
-        setTimeout(()=>{
+function setError(message) {
+    if (message) {
+        setTimeout(() => {
             setError('')
-        },1000)
+        }, 1000)
     }
-    error.innerHTML=message
+    error.innerHTML = message
 }
 
-function addToFound(words, letters){
+function addToFound(words, letters) {
     foundWords.push(...words)
     letterScore += letters
-    for(const word of words){
+    for (const word of words) {
         select('.foundWords').insertAdjacentHTML('beforeend', `<word>${word}</word>`)
     }
 }
 
-function updateCounter (wordsList){
-    select('#letters').innerHTML=`${letterScore}/${totalLetters}`
+function updateCounter(wordsList) {
+    select('#letters').innerHTML = `${letterScore}/${totalLetters}`
     counter.innerHTML = `${foundWords.length}/${wordsList.length}`
 }
 
-function getTiers(count){
+function getTiers(count) {
     const calc = x => Math.floor(count * x)
     return [
         ['Iniciante', 0],
         ['Mediano', Math.max(3, calc(0.05))],
-        ['Bom', Math.max(6,calc(0.1))],
-        ['Ótimo', Math.max(9,calc(0.3))],
-        ['Excelente', Math.max(12,(calc(0.5)))],
-        ['Dominante', Math.max(15,calc(0.8))],
+        ['Bom', Math.max(6, calc(0.1))],
+        ['Ótimo', Math.max(9, calc(0.3))],
+        ['Excelente', Math.max(12, (calc(0.5)))],
+        ['Dominante', Math.max(15, calc(0.8))],
         ['Genial', Math.max(20, calc(1))]
     ]
 }
 
-function renderScore(letters){
+function renderScore(letters) {
     const score = document.createElement("score")
-    score.innerHTML='+'+letters
+    score.innerHTML = '+' + letters
     select("#tiers").append(score)
-    setTimeout(() =>{
-       score.remove() 
+    setTimeout(() => {
+        score.remove()
     }, 1000)
 }
 
-function win(){
-    select('win').style.display='block'
+function win() {
+    select('win').style.display = 'block'
 }
 
-function renderLetters(chars, mainChar){
-    charGrid.innerHTML=''
-    chars.forEach(char =>{
+function renderLetters(chars, mainChar) {
+    charGrid.innerHTML = ''
+    chars.forEach(char => {
         const el = document.createElement('div')
-        el.classList.add('char', String(char) == String(mainChar) ? 'mandatory': 'optional')
+        el.classList.add('char', String(char) == String(mainChar) ? 'mandatory' : 'optional')
         el.innerHTML = char
-        el.addEventListener('click',()=>{
-            word.innerHTML+= char
+        el.addEventListener('click', () => {
+            word.innerHTML += char
         })
         charGrid.append(el)
     })
 }
 
-function shuffleLetters(chars, mainChar){
+function shuffleLetters(chars, mainChar) {
     const letters = [...chars]
-    const shuffled = chars.map(()=>letters.splice(random(letters.length),1))
+    const shuffled = chars.map(() => letters.splice(random(letters.length), 1))
     renderLetters(shuffled, mainChar)
 }
 
-function random(multiplier){
-    return Math.floor(Math.random()*multiplier)
+function random(multiplier) {
+    return Math.floor(Math.random() * multiplier)
 }
 
-function countLetters(words){
-   return words.reduce((total, word)=>{
+function countLetters(words) {
+    return words.reduce((total, word) => {
         const count = word.length === 4 ? 1 : word.length
         return total + count;
     }, 0)
 }
 
-function setup(wordsFile){
-    const [chars, mainChar]=chooseChars()
+function setup(wordsFile) {
+    const [chars, mainChar] = chooseChars()
     const wordsList = filterWords(wordsFile, chars, mainChar);
-    if(retry > 0 && !wordsList) {
+    if (retry > 0 && !wordsList) {
         const retryPhrase = Math.floor(Math.random() * loadingPhrases.length)
         select('#retries').innerHTML = "... as abelhas estão " + loadingPhrases[retryPhrase] + " ...";
         setTimeout(() => {
@@ -258,7 +258,7 @@ function setup(wordsFile){
         }, Math.max(200, Math.random() * 400))
         return
     }
-    if(!wordsList || !wordsList.length) {
+    if (!wordsList || !wordsList.length) {
         return showLoadingError()
     };
     totalLetters = countLetters(wordsList)
@@ -266,13 +266,14 @@ function setup(wordsFile){
     enableActions(chars, mainChar, wordsList)
     tiers = getTiers(totalLetters)
     setHelpTiers(tiers)
-    select('reference').innerHTML=wordsList.join(' | ')
-    select('next').style.width = Math.ceil(tiers[1][1]/totalLetters * 100) + '%'
+    select('reference').innerHTML = wordsList.join(' | ')
+    select('next').style.width = Math.ceil(tiers[1][1] / totalLetters * 100) + '%'
     updateCounter(wordsList)
+
     loading.remove()
 }
 
-function setHelpTiers(){
+function setHelpTiers() {
     const helpTiers = select("#helpTiers");
     tiers.map(([tier, points]) => {
         const tierElement = document.createElement('li');
@@ -282,22 +283,30 @@ function setHelpTiers(){
 
 }
 
-function showLoadingError(){
+function showLoadingError() {
     select('#retries').innerHTML = "Sinto muito! Tente novamente mais tarde."
     loading.classList.add('failed')
     return;
 }
 
-async function start(){
+async function start() {
 
     const wordsFile = await fetch(wordsListUrl).then(x => x.text()).catch(() => {
         return showLoadingError()
     })
 
+    showHelpOnEnter()
     setup(wordsFile)
-    
 
-    select("help").classList.add("show")
 }
+
+function showHelpOnEnter() {
+    const activeUser = localStorage.getItem("activeUser")
+    if (!activeUser) {
+        select("help").classList.add("show")
+        localStorage.setItem("activeUser", "true")
+    }
+}
+
 
 start()

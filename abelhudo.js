@@ -269,7 +269,7 @@ function setup(wordsFile){
     select('reference').innerHTML=wordsList.join(' | ')
     select('next').style.width = Math.ceil(tiers[1][1]/totalLetters * 100) + '%'
     updateCounter(wordsList)
-    loading.remove()
+    
 }
 
 function setHelpTiers(){
@@ -295,6 +295,10 @@ async function start(){
     })
 
     setup(wordsFile)
+    
+    loading.remove()
+
+    select("help").classList.add("show")
 }
 
 start()

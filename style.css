@@ -196,11 +196,6 @@ action:active{
 #shuffle{
   width: 3rem;
   height: 3rem;
-  /* position: absolute;
-  left: 50%;
-  transform: translate(-50%);
-  top: -2.5rem;
-  margin-bottom: 1rem; */
 }
 
 #shuffle svg{
@@ -350,7 +345,7 @@ score{
   position:absolute;
 }
 
-help{
+.modal{
   position: absolute;
   left: 50%;
   top: 50%;
@@ -361,15 +356,15 @@ help{
 }
 
 
-help.show{
+.modal.show{
   display: block;
   opacity: 1;
   transition: 0.3s 0.2s;
 }
 
-help .container{
+.modal .container{
   border: 1px solid var(--border-gray);
-  padding: 1.4rem 0.5rem;
+  padding: 1.4rem 0.7rem;
   position: relative;
   background: white;
   box-shadow: 3px 3px 5px rgba(0,0,0,.2);
@@ -377,20 +372,24 @@ help .container{
   border-radius: 5px;
 }
 
-help h2{
+.modal h2{
   text-align: center;
   margin: 1rem;
 }
 
-help h3{
+.modal h3{
   margin: 0.7rem 0;
 }
 
-ul,li{
+.modal p:last-of-type{
+  margin-bottom: 1rem;
+}
+
+tiers ul,li{
   list-style: none;
 }
 
-#helpTiers li{
+tiers li{
   margin: 0.5rem 0;
   display: flex;
   justify-content: space-between;
@@ -430,10 +429,4 @@ action.share svg{
     opacity: 0;
     transform: scale(0.5)
   }
-}
-
-adplace{
-  width: 100%;
-  max-height: 90px;
-  overflow: hidden;
 }

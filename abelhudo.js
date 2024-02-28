@@ -14,6 +14,9 @@ const loadingPhrases = [
 function select(query) {
     return document.querySelector(query)
 }
+function selectAll(query) {
+    return document.querySelectorAll(query)
+}
 const word = select('#word')
 const charGrid = select('.charGrid')
 const error = select('error')
@@ -98,12 +101,14 @@ function enableActions(chars, mainChar, wordsList) {
         window.location.href = whatsappUrl;
     });
 
-    select("help .share").addEventListener('click', () => {
-        const dataText = "Dê uma olhada nesse jogo! Forme palavras para alcançar o maior nível.";
-        const shareUrl = 'https://thayssn.github.io/abelhando/';
-        const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(dataText)}%20${encodeURIComponent(shareUrl)}`;
-        window.location.href = whatsappUrl;
-    });
+    selectAll(".modal .share").forEach(item => {
+        item.addEventListener('click', () => {
+            const dataText = "Dê uma olhada nesse jogo! Forme palavras para alcançar o maior nível.";
+            const shareUrl = 'https://thayssn.github.io/abelhando/';
+            const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(dataText)}%20${encodeURIComponent(shareUrl)}`;
+            window.location.href = whatsappUrl;
+        });
+    })
 
     select('#enter').addEventListener('click', () => {
         const candidateWord = word.innerHTML
@@ -136,11 +141,22 @@ function enableActions(chars, mainChar, wordsList) {
         reference.classList.toggle('show')
     })
     select("#help").addEventListener("click", () => {
-        select("help").classList.add("show");
+        select("help.modal").classList.add("show");
     })
 
-    select("#close").addEventListener("click", () => {
-        select("help").classList.remove("show")
+    selectAll("#close").forEach(item => {
+        item.addEventListener("click", () => {
+            selectAll(".modal").forEach((item) => {
+                item.classList.remove("show")
+            })
+        })
+    })
+
+    select("#counters").addEventListener("click", () => {
+        selectAll(".modal").forEach(item => {
+            item.classList.remove("show");
+        })
+        select("tiers.modal").classList.add('show')
     })
 }
 
@@ -308,5 +324,21 @@ function showHelpOnEnter() {
     }
 }
 
+function callAdsModal(){
+    `<adsModal>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5179758745566337"
+     crossorigin="anonymous"></script>
+    <!-- SMALL -->
+    <ins class="adsbygoogle"
+        style="display:block"
+        data-ad-client="ca-pub-5179758745566337"
+        data-ad-slot="4491149392"
+        data-ad-format="auto"
+        data-full-width-responsive="true"></ins>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </adsModal>`
+}
 
 start()

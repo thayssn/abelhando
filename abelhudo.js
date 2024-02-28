@@ -202,11 +202,11 @@ function enableActions(chars, mainChar, wordsList) {
         })
     })
 
-    select("#counters").addEventListener("click", () => {
-        selectAll(".modal").forEach(item => {
-            item.classList.remove("show");
+    selectAll("#letters, #tiers").forEach(item => {
+        item.addEventListener("click", () => {
+            closeModals()
+            showModal("tiers.modal")
         })
-        showModal("tiers.modal")
     })
 }
 

@@ -119,12 +119,12 @@ error{
   margin:1rem 0;
   display: flex;
   flex-wrap: wrap;
-  font-size: 0.5rem;
+  font-size: 0.4rem;
 }
 
 .foundWords word{
   display: inline-block;
-  padding:6px;
+  padding:5px;
   margin: 5px;
   font-style: italic;
   text-transform: capitalize;
@@ -487,6 +487,25 @@ input:checked + .slider:before {
   -webkit-transform: translateX(26px);
   -ms-transform: translateX(26px);
   transform: translateX(26px);
+}
+
+.switch warn{
+  display: block;
+  opacity: 0;
+  margin-top: 0;
+  margin-bottom: 0;
+  width: 10rem;
+  font-size: 0.4rem;
+  font-style: italic;
+  transition:  all 11s;
+  transition: opacity 0.2s, margin 0.3s 0.3s;
+}
+
+input:not(:checked) ~ warn{
+  opacity: 1;
+  margin-top:30px;
+  margin-bottom: 1rem;
+  transition:  opacity 0.3s 0.3s, margin 0.3s;
 }
 
 /* Rounded sliders */

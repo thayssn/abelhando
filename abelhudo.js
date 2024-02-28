@@ -30,8 +30,8 @@ let foundWords = []
 let totalLetters =  0
 let letterScore =  0
 let tiers = []
-let currentTier = localStorage.getItem("currentTier") ?? "Iniciante";
-let currentTierIndex = Number(localStorage.getItem("currentTierIndex") ?? 0) ?? 0;
+let currentTier;
+let currentTierIndex;
 const MAX_RETRIES = loadingPhrases.length * 3;
 let retry = MAX_RETRIES
 const MIN_WORDS = 15
@@ -321,18 +321,15 @@ function countLetters(words) {
     }, 0)
 }
 
-function setup(wordsFile) {
-    const [chars, mainChar] = getParamsChars() ?? getStorageChars() ?? chooseChars()
-   
+function setup(wordsFile, chars, mainChar) {
     const wordsList = filterWords(wordsFile, chars, mainChar);
     if (retry > 0 && !wordsList) {
         const retryPhrase = Math.floor(Math.random() * loadingPhrases.length)
         select('#retries').innerHTML = "... as abelhas estão " + loadingPhrases[retryPhrase] + " ...";
         setTimeout(() => {
-            setup(wordsFile)
+            setup(wordsFile, ...chooseChars())
         }, Math.max(200, Math.random() * 400))
         return
-
     }
     if (!wordsList || !wordsList.length) {
         return showLoadingError()
@@ -346,6 +343,8 @@ function setup(wordsFile) {
     enableActions(chars, mainChar, wordsList)
     tiers = getTiers(totalLetters)
     const localFoundWords = localStorage.getItem('foundWords');
+    currentTier = localStorage.getItem("currentTier") ?? "Iniciante";
+    currentTierIndex = Number(localStorage.getItem("currentTierIndex") ?? 0) ?? 0;
     if(localFoundWords){
         const words = JSON.parse(localFoundWords);
         const lettersFound = countLetters(words)
@@ -386,17 +385,34 @@ async function start() {
     })
 
     select("#keepGame input").checked = keepGame;
-    setup(wordsFile)
+    
+    const paramsChars = getParamsChars();
+    const storageChars = getStorageChars();
+    window.history.replaceState({}, '', '/')
+    if(paramsChars && storageChars){
+        showModal("challenge.modal")
+        select("challenge #accept").addEventListener("click", () => {
+            clearData()
+            setup(wordsFile, ...paramsChars);
+            closeModals()
+        })
+        select("challenge #continue").addEventListener("click", () => {
+            setup(wordsFile, ...storageChars);
+            closeModals()
+        })
+        return;
+    }
 
+    const [chars, mainChar] =  paramsChars ?? storageChars ?? chooseChars()
+    setup(wordsFile, chars, mainChar);
 }
+
 
 function getParamsChars(){
     const query = window.location.search;
     const urlParams = new URLSearchParams(query);
     const chars = urlParams.get("letras")
     if(!chars || chars?.length != 7) return
-
-    clearData()
     return [chars.split(''), chars.split('').at(-1)]
 }
 

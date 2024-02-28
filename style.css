@@ -3,7 +3,6 @@
 :root{
   font-family: "ABeeZee", sans-serif;
   font-size: 6vw;
-  font-family: sans-serif;
   font-weight:400;
   --yellow: #FCD25C;
   --gray: #e6e6e6;
@@ -223,7 +222,7 @@ loading.failed img{
 }
 
 loading img{
-  width: 150px;
+  width: 7rem;
   flex-shrink: 0;
 }
 
@@ -399,16 +398,17 @@ tiers li{
   justify-content: space-between;
 }
 
-action.share{
+.modal action{
   padding: 0.4rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   gap: 1rem;
   margin-top: 1rem;
+  text-align: center;
 }
 
-action.share svg{
+.modal action svg{
   max-height: 1rem;
 }
 

@@ -31,11 +31,11 @@ let totalLetters =  0
 let letterScore =  0
 let tiers = []
 let currentTier = localStorage.getItem("currentTier") ?? "Iniciante";
-let currentTierIndex = Number(localStorage.getItem("currentTierIndex")) ?? 0;
+let currentTierIndex = Number(localStorage.getItem("currentTierIndex") ?? 0) ?? 0;
 const MAX_RETRIES = loadingPhrases.length * 3;
 let retry = MAX_RETRIES
-const MIN_WORDS = 20
-const MAX_WORDS = 50
+const MIN_WORDS = 5
+const MAX_WORDS = 10
 const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "õ", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
     a: 'aáâ',
@@ -213,7 +213,6 @@ function enableActions(chars, mainChar, wordsList) {
 function updateScore(wordsList, lettersFound) {
     updateCounter(wordsList)
     renderScore(lettersFound)
-    console.log(currentTierIndex)
     const [label, index] = tiers.reduce((final, [k, v], i) => {
         if (letterScore >= v) return [k, i]
         return final
@@ -355,8 +354,10 @@ function setup(wordsFile) {
     updateCounter(wordsList)
     setHelpTiers(tiers)
     select('reference').innerHTML = wordsList.join(' | ')
-    select('next').style.width = Math.ceil(tiers[currentTierIndex+1][1] / totalLetters * 100) + '%'
     select("#tierLabel").innerHTML = currentTier;
+    if(!currentTierIndex >= tiers.length){
+        select('next').style.width = Math.ceil(tiers[currentTierIndex+1][1] / totalLetters * 100) + '%'
+    }
     loading.remove()
     showHelpOnEnter()
 }

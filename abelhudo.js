@@ -392,7 +392,8 @@ function getParamsChars(){
     const urlParams = new URLSearchParams(query);
     const chars = urlParams.get("letras")
     if(!chars || chars?.length != 7) return
-    
+
+    clearData()
     return [chars.split(''), chars.split('').at(-1)]
 }
 

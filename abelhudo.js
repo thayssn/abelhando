@@ -26,11 +26,13 @@ const tierRange = select('#tierRange')
 const reference = select('reference')
 const local = window.location.protocol === 'file:'
 const wordsListUrl = local ? 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt' : 'br-utf8.txt'
+const localFoundWords = localStorage.getItem('foundWords');
 let foundWords = []
-let totalLetters = 0
-let letterScore = 0
+let totalLetters =  0
+let letterScore =  0
 let tiers = []
-let currentTier = "Iniciante";
+let currentTier = localStorage.getItem("currentTier") ?? "Iniciante";
+let currentTierIndex = Number(localStorage.getItem("currentTierIndex")) ?? 0;
 const MAX_RETRIES = loadingPhrases.length * 3;
 let retry = MAX_RETRIES
 const MIN_WORDS = 20
@@ -43,6 +45,8 @@ const charMap = {
     o: 'oóô',
     u: 'uúü'
 }
+const keepGameStorage = localStorage.getItem("keepGame");
+const keepGame = JSON.parse(keepGameStorage ?? false);
 
 function chooseChars() {
     const alternatives = [...allChars]
@@ -93,18 +97,65 @@ function validateWord(word, mainChar, wordsList) {
     return wordsToAdd
 }
 
+function closeModals(){
+    selectAll(".modal").forEach((item) => {
+        item.classList.remove("show")
+    })
+}
+
+function showModal(selection){
+    select(selection).classList.add("show")
+}
+
 function enableActions(chars, mainChar, wordsList) {
-    select("#share").addEventListener('click', () => {
-        const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras e cheguei ao nível "${currentTier}"! Até onde você consegue chegar?`;
-        const shareUrl = 'https://thayssn.github.io/abelhando/';
-        const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
-        window.location.href = whatsappUrl;
-    });
+
+    select("#config").addEventListener("click", () => {
+        closeModals()
+        showModal("config")
+    })
+
+    select("#new").addEventListener("click", () => {
+        clearData();
+        window.location.reload();
+    })
+
+    function clearData(){
+        localStorage.removeItem("chars")
+        localStorage.removeItem("mainChar")
+        localStorage.removeItem("currentTierIndex")
+        localStorage.removeItem("currentTier")
+        localStorage.removeItem("foundWords"),
+        localStorage.removeItem("letterScore")
+    }
+
+    select("#keepGame input").addEventListener('change', (e) => {
+        if(e.target.checked){
+            localStorage.setItem("chars", chars.join(''))
+            localStorage.setItem("mainChar", mainChar)
+            localStorage.setItem("currentTierIndex", currentTierIndex),
+            localStorage.setItem("currentTier", currentTier)
+            localStorage.setItem("foundWords", JSON.stringify(foundWords)),
+            localStorage.setItem("letterScore", letterScore)
+        }else{
+            clearData()
+        }
+        localStorage.setItem("keepGame", JSON.stringify(e.target.checked))
+    })
+
+    selectAll("#share").forEach(item => {
+        item.addEventListener('click', () => {
+            const sortedChars = chars.sort((a) => a == mainChar ? 1 : -1).join('');
+            const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras e cheguei ao nível "${currentTier}"! Até onde você consegue chegar?`;
+            const shareUrl = `https://abelhando.site/?letras=${sortedChars}`;
+            const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
+            window.location.href = whatsappUrl;
+        });
+    })
 
     selectAll(".modal .share").forEach(item => {
         item.addEventListener('click', () => {
             const dataText = "Dê uma olhada nesse jogo! Forme palavras para alcançar o maior nível.";
-            const shareUrl = 'https://thayssn.github.io/abelhando/';
+            const shareUrl = 'https://abelhando.site';
             const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(dataText)}%20${encodeURIComponent(shareUrl)}`;
             window.location.href = whatsappUrl;
         });
@@ -141,14 +192,12 @@ function enableActions(chars, mainChar, wordsList) {
         reference.classList.toggle('show')
     })
     select("#help").addEventListener("click", () => {
-        select("help.modal").classList.add("show");
+        showModal("help.modal");
     })
 
     selectAll("#close").forEach(item => {
         item.addEventListener("click", () => {
-            selectAll(".modal").forEach((item) => {
-                item.classList.remove("show")
-            })
+            closeModals()
         })
     })
 
@@ -156,19 +205,24 @@ function enableActions(chars, mainChar, wordsList) {
         selectAll(".modal").forEach(item => {
             item.classList.remove("show");
         })
-        select("tiers.modal").classList.add('show')
+        showModal("tiers.modal")
     })
 }
 
 function updateScore(wordsList, lettersFound) {
     updateCounter(wordsList)
     renderScore(lettersFound)
-
+    console.log(currentTierIndex)
     const [label, index] = tiers.reduce((final, [k, v], i) => {
         if (letterScore >= v) return [k, i]
         return final
-    }, ['Iniciante', 0])
+    }, [currentTier, currentTierIndex])
     currentTier = label;
+    currentTierIndex = index
+    if(keepGame){
+        localStorage.setItem("currentTierIndex", currentTierIndex),
+        localStorage.setItem("currentTier", currentTier)
+    }
     select('#tierLabel').innerHTML = label
     select('tier').style.width = Math.ceil(letterScore / totalLetters * 100) + '%'
     select('tier, next').classList.remove('active')
@@ -177,7 +231,7 @@ function updateScore(wordsList, lettersFound) {
     if (foundWords.length === wordsList.length) {
         return win()
     }
-    select('next').style.width = Math.ceil(tiers[index + 1][1] / totalLetters * 100) + '%'
+    select('next').style.width = Math.ceil(tiers[currentTierIndex + 1][1] / totalLetters * 100) + '%'
 
 }
 
@@ -194,9 +248,13 @@ function setError(message) {
     error.innerHTML = message
 }
 
-function addToFound(words, letters) {
+function addToFound(words, lettersFound) {
     foundWords.push(...words)
-    letterScore += letters
+    letterScore += lettersFound
+    if(keepGame){
+        localStorage.setItem("foundWords", JSON.stringify(foundWords))
+        localStorage.setItem("letterScore", letterScore)
+    }
     for (const word of words) {
         select('.foundWords').insertAdjacentHTML('beforeend', `<word>${word}</word>`)
     }
@@ -230,7 +288,7 @@ function renderScore(letters) {
 }
 
 function win() {
-    select('win').style.display = 'block'
+    showModal("win.modal")
 }
 
 function renderLetters(chars, mainChar) {
@@ -264,7 +322,8 @@ function countLetters(words) {
 }
 
 function setup(wordsFile) {
-    const [chars, mainChar] = chooseChars()
+    const [chars, mainChar] = getParamsChars() ?? getStorageChars() ?? chooseChars()
+   
     const wordsList = filterWords(wordsFile, chars, mainChar);
     if (retry > 0 && !wordsList) {
         const retryPhrase = Math.floor(Math.random() * loadingPhrases.length)
@@ -277,16 +336,29 @@ function setup(wordsFile) {
     if (!wordsList || !wordsList.length) {
         return showLoadingError()
     };
+    if(keepGame){
+        localStorage.setItem("chars", chars.join(''))
+        localStorage.setItem("mainChar", mainChar)
+    }
     totalLetters = countLetters(wordsList)
     renderLetters(chars, mainChar)
     enableActions(chars, mainChar, wordsList)
     tiers = getTiers(totalLetters)
+    
+    if(localFoundWords){
+        console.log('yas')
+        const words = JSON.parse(localFoundWords);
+        const lettersFound = countLetters(words)
+        addToFound(words, lettersFound) 
+        updateScore(wordsList, lettersFound)
+    } 
+    updateCounter(wordsList)
     setHelpTiers(tiers)
     select('reference').innerHTML = wordsList.join(' | ')
-    select('next').style.width = Math.ceil(tiers[1][1] / totalLetters * 100) + '%'
-    updateCounter(wordsList)
-
+    select('next').style.width = Math.ceil(tiers[currentTierIndex+1][1] / totalLetters * 100) + '%'
+    select("#tierLabel").innerHTML = currentTier;
     loading.remove()
+    showHelpOnEnter()
 }
 
 function setHelpTiers() {
@@ -306,14 +378,32 @@ function showLoadingError() {
 }
 
 async function start() {
-
     const wordsFile = await fetch(wordsListUrl).then(x => x.text()).catch(() => {
         return showLoadingError()
     })
 
-    showHelpOnEnter()
+    select("#keepGame input").checked = keepGame;
     setup(wordsFile)
 
+}
+
+function getParamsChars(){
+    const query = window.location.search;
+    const urlParams = new URLSearchParams(query);
+    const chars = urlParams.get("letras")
+    if(!chars || chars?.length != 7) return
+    
+    return [chars, chars[-1]]
+}
+
+function getStorageChars(){
+    if(!keepGame) return;
+    const chars = localStorage.getItem("chars")
+    const mainChar = localStorage.getItem("mainChar")
+    
+    if(!chars || chars?.length != 7 || !mainChar) return;
+
+    return [chars.split(''), mainChar]
 }
 
 function showHelpOnEnter() {
@@ -322,23 +412,6 @@ function showHelpOnEnter() {
         select("help").classList.add("show")
         localStorage.setItem("activeUser", "true")
     }
-}
-
-function callAdsModal(){
-    `<adsModal>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5179758745566337"
-     crossorigin="anonymous"></script>
-    <!-- SMALL -->
-    <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-5179758745566337"
-        data-ad-slot="4491149392"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
-    <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-  </adsModal>`
 }
 
 start()

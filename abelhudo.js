@@ -76,6 +76,7 @@ function filterWords(wordsFile, chars, mainChar) {
     }
     retry--
 }
+
 function sanitize(str) {
     return str
         .replace(/[áâ]/g, "a")
@@ -125,7 +126,7 @@ function enableActions(chars, mainChar, wordsList) {
 
     select("#new").addEventListener("click", () => {
         clearData();
-        window.location.reload();
+        window.location.assign('/');
     })
 
     select("#keepGame input").addEventListener('change', (e) => {

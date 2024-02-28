@@ -26,7 +26,6 @@ const tierRange = select('#tierRange')
 const reference = select('reference')
 const local = window.location.protocol === 'file:'
 const wordsListUrl = local ? 'https://www.ime.usp.br/~pf/dicios/br-utf8.txt' : 'br-utf8.txt'
-const localFoundWords = localStorage.getItem('foundWords');
 let foundWords = []
 let totalLetters =  0
 let letterScore =  0
@@ -346,7 +345,7 @@ function setup(wordsFile) {
     renderLetters(chars, mainChar)
     enableActions(chars, mainChar, wordsList)
     tiers = getTiers(totalLetters)
-    
+    const localFoundWords = localStorage.getItem('foundWords');
     if(localFoundWords){
         const words = JSON.parse(localFoundWords);
         const lettersFound = countLetters(words)

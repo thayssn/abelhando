@@ -34,8 +34,8 @@ let currentTier = localStorage.getItem("currentTier") ?? "Iniciante";
 let currentTierIndex = Number(localStorage.getItem("currentTierIndex") ?? 0) ?? 0;
 const MAX_RETRIES = loadingPhrases.length * 3;
 let retry = MAX_RETRIES
-const MIN_WORDS = 5
-const MAX_WORDS = 10
+const MIN_WORDS = 15
+const MAX_WORDS = 50
 const allChars = ["a", "ã", "b", "c", "ç", "d", "e", "f", "g", "h", "i", "j", "l", "m", "n", "o", "õ", "p", "q", "r", "s", "t", "u", "v", "x", "z"]
 const charMap = {
     a: 'aáâ',
@@ -272,9 +272,9 @@ function getTiers(count) {
         ['Mediano', Math.max(3, calc(0.05))],
         ['Bom', Math.max(6, calc(0.1))],
         ['Ótimo', Math.max(9, calc(0.3))],
-        ['Excelente', Math.max(12, (calc(0.5)))],
-        ['Dominante', Math.max(15, calc(0.8))],
-        ['Genial', Math.max(20, calc(1))]
+        ['Excelente', Math.max(11, (calc(0.5)))],
+        ['Dominante', Math.max(13, calc(0.8))],
+        ['Genial', Math.max(15, calc(1))]
     ]
 }
 

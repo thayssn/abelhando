@@ -282,12 +282,18 @@ reference.show{
 
 #menu .right, #menu .left{
   display: flex;
+  align-items: center;
   gap: 0.6rem;
 }
 
 #menu svg{
   width: 1rem;
   height: 1rem;
+}
+
+#menu svg#openChallenge{
+  height: 1.2rem;
+  width: 1.2rem;  
 }
 
 #menu svg#help{
@@ -412,7 +418,7 @@ tiers li{
   max-height: 1rem;
 }
 
-#close{
+#close.icon{
   position: absolute;
   right: 0;
   top: 0;

@@ -31,6 +31,7 @@ let totalLetters =  0
 let letterScore =  0
 let tiers = []
 let currentTier;
+let challengePoints;
 let currentTierIndex;
 const MAX_RETRIES = loadingPhrases.length * 3;
 let retry = MAX_RETRIES
@@ -116,6 +117,14 @@ function clearData(){
         localStorage.removeItem("letterScore")
     }
 
+function challenge(chars, mainChar){
+    const sortedChars = chars.sort((a) => a == mainChar ? 1 : -1).join('');
+    const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras e cheguei ao nível "${currentTier}"! Até onde você consegue chegar?`;
+    const shareUrl = `https://abelhando.site/?letras=${sortedChars}&pontos=${letterScore}`;
+    const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
+    window.location.href = whatsappUrl;
+}
+
 function enableActions(chars, mainChar, wordsList) {
 
     select("#config").addEventListener("click", () => {
@@ -143,13 +152,13 @@ function enableActions(chars, mainChar, wordsList) {
         localStorage.setItem("keepGame", JSON.stringify(e.target.checked))
     })
 
-    selectAll("#share").forEach(item => {
+    select("#openChallenge").addEventListener("click", () => {
+        closeModals();
+        showModal("challenge.modal")
+    })
+    selectAll("#challenge").forEach(item => {
         item.addEventListener('click', () => {
-            const sortedChars = chars.sort((a) => a == mainChar ? 1 : -1).join('');
-            const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras e cheguei ao nível "${currentTier}"! Até onde você consegue chegar?`;
-            const shareUrl = `https://abelhando.site/?letras=${sortedChars}`;
-            const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
-            window.location.href = whatsappUrl;
+            challenge(chars, mainChar)
         });
     })
 
@@ -227,11 +236,13 @@ function updateScore(wordsList, lettersFound) {
     select('tier').style.width = Math.ceil(letterScore / totalLetters * 100) + '%'
     select('tier, next').classList.remove('active')
     select('tier, next').classList.add('active')
-
     if (foundWords.length === wordsList.length) {
         return win()
     }
     select('next').style.width = Math.ceil(tiers[currentTierIndex + 1][1] / totalLetters * 100) + '%'
+    if(challengePoints && letterScore > challengePoints){
+        showModal("winChallenge.modal")
+    }
 
 }
 
@@ -390,13 +401,13 @@ async function start() {
     const storageChars = getStorageChars();
     window.history.replaceState({}, '', '/')
     if(paramsChars && storageChars){
-        showModal("challenge.modal")
-        select("challenge #accept").addEventListener("click", () => {
+        showModal("acceptChallenge.modal")
+        select("acceptChallenge #accept").addEventListener("click", () => {
             clearData()
             setup(wordsFile, ...paramsChars);
             closeModals()
         })
-        select("challenge #continue").addEventListener("click", () => {
+        select("acceptChallenge #continue").addEventListener("click", () => {
             setup(wordsFile, ...storageChars);
             closeModals()
         })
@@ -413,6 +424,7 @@ function getParamsChars(){
     const urlParams = new URLSearchParams(query);
     const chars = urlParams.get("letras")
     if(!chars || chars?.length != 7) return
+    challengePoints = Number(urlParams.get("pontos"))
     return [chars.split(''), chars.split('').at(-1)]
 }
 

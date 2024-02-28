@@ -199,7 +199,7 @@ function enableActions(chars, mainChar, wordsList) {
     })
 
     counter.addEventListener('click', () => {
-        reference.classList.toggle('show')
+        //reference.classList.toggle('show')
     })
     select("#help").addEventListener("click", () => {
         showModal("help.modal");

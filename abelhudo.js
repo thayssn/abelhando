@@ -393,7 +393,7 @@ function getParamsChars(){
     const chars = urlParams.get("letras")
     if(!chars || chars?.length != 7) return
     
-    return [chars, chars[-1]]
+    return [chars.split(''), chars.split('').at(-1)]
 }
 
 function getStorageChars(){

@@ -46,7 +46,7 @@ const charMap = {
     u: 'uúü'
 }
 const keepGameStorage = localStorage.getItem("keepGame");
-const keepGame = JSON.parse(keepGameStorage ?? false);
+const keepGame = JSON.parse(keepGameStorage ?? true);
 
 function chooseChars() {
     const alternatives = [...allChars]

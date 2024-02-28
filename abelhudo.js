@@ -332,6 +332,7 @@ function setup(wordsFile) {
             setup(wordsFile)
         }, Math.max(200, Math.random() * 400))
         return
+
     }
     if (!wordsList || !wordsList.length) {
         return showLoadingError()
@@ -375,6 +376,7 @@ function setHelpTiers() {
 function showLoadingError() {
     select('#retries').innerHTML = "Sinto muito! Tente novamente mais tarde."
     loading.classList.add('failed')
+    clearData()
     return;
 }
 

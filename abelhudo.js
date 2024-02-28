@@ -322,7 +322,7 @@ function countLetters(words) {
 }
 
 function setup(wordsFile) {
-    const [chars, mainChar] = getParamsChars() ?? getStorageChars() ?? chooseChars()
+    const [chars, mainChar] = getStorageChars() ?? chooseChars()
    
     const wordsList = filterWords(wordsFile, chars, mainChar);
     if (retry > 0 && !wordsList) {

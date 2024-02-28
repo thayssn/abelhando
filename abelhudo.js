@@ -46,7 +46,7 @@ const charMap = {
     u: 'uúü'
 }
 const keepGameStorage = localStorage.getItem("keepGame");
-const keepGame = JSON.parse(keepGameStorage ?? true);
+let keepGame = JSON.parse(keepGameStorage ?? true);
 
 function chooseChars() {
     const alternatives = [...allChars]
@@ -107,6 +107,15 @@ function showModal(selection){
     select(selection).classList.add("show")
 }
 
+function clearData(){
+        localStorage.removeItem("chars")
+        localStorage.removeItem("mainChar")
+        localStorage.removeItem("currentTierIndex")
+        localStorage.removeItem("currentTier")
+        localStorage.removeItem("foundWords"),
+        localStorage.removeItem("letterScore")
+    }
+
 function enableActions(chars, mainChar, wordsList) {
 
     select("#config").addEventListener("click", () => {
@@ -119,15 +128,6 @@ function enableActions(chars, mainChar, wordsList) {
         window.location.reload();
     })
 
-    function clearData(){
-        localStorage.removeItem("chars")
-        localStorage.removeItem("mainChar")
-        localStorage.removeItem("currentTierIndex")
-        localStorage.removeItem("currentTier")
-        localStorage.removeItem("foundWords"),
-        localStorage.removeItem("letterScore")
-    }
-
     select("#keepGame input").addEventListener('change', (e) => {
         if(e.target.checked){
             localStorage.setItem("chars", chars.join(''))
@@ -139,6 +139,7 @@ function enableActions(chars, mainChar, wordsList) {
         }else{
             clearData()
         }
+        keepGame = e.target.checked;
         localStorage.setItem("keepGame", JSON.stringify(e.target.checked))
     })
 
@@ -322,7 +323,7 @@ function countLetters(words) {
 }
 
 function setup(wordsFile) {
-    const [chars, mainChar] = getStorageChars() ?? chooseChars()
+    const [chars, mainChar] = getParamsChars() ?? getStorageChars() ?? chooseChars()
    
     const wordsList = filterWords(wordsFile, chars, mainChar);
     if (retry > 0 && !wordsList) {
@@ -346,7 +347,6 @@ function setup(wordsFile) {
     tiers = getTiers(totalLetters)
     
     if(localFoundWords){
-        console.log('yas')
         const words = JSON.parse(localFoundWords);
         const lettersFound = countLetters(words)
         addToFound(words, lettersFound) 

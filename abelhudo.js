@@ -132,10 +132,12 @@ function enableActions(chars, mainChar, wordsList) {
         showModal("config")
     })
 
-    select("#new").addEventListener("click", () => {
-        clearData();
-        window.location.assign('/');
-    })
+    selectAll("#new").forEach( btn => {
+        btn.addEventListener("click", () => {
+            clearData();
+            window.location.assign('/');
+        })
+    });
 
     select("#keepGame input").addEventListener('change', (e) => {
         if(e.target.checked){

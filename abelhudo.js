@@ -200,9 +200,10 @@ function enableActions(chars, mainChar, wordsList) {
         shuffleLetters(chars, mainChar)
     })
 
-    counter.addEventListener('click', () => {
-        //reference.classList.toggle('show')
+    counter.addEventListener('dblclick', () => {
+        reference.classList.toggle('show')
     })
+    
     select("#help").addEventListener("click", () => {
         showModal("help.modal");
     })

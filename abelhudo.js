@@ -402,7 +402,7 @@ async function start() {
     
     const paramsChars = getParamsChars();
     const storageChars = getStorageChars();
-    window.history.replaceState({}, '', '/')
+    window.history.replaceState({}, '', '/abelhando/')
     if(paramsChars && storageChars){
         showModal("acceptChallenge.modal")
         select("acceptChallenge #accept").addEventListener("click", () => {

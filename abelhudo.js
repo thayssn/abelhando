@@ -136,7 +136,7 @@ function enableActions(chars, mainChar, wordsList) {
     selectAll("#new").forEach( btn => {
         btn.addEventListener("click", () => {
             clearData();
-            window.location.assign('/');
+            window.location.assign('/abelhando/');
         })
     });
 

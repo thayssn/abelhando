@@ -1,3 +1,4 @@
+const url = 'https://thayssn.github.io/abelhando';
 const loadingPhrases = [
     "procurando as letras",
     "se preparando para pousar",
@@ -120,7 +121,7 @@ function clearData(){
 function challenge(chars, mainChar){
     const sortedChars = chars.sort((a) => a == mainChar ? 1 : -1).join('');
     const shareText = `Fiz ${letterScore} pontos com ${foundWords.length} palavras e cheguei ao nível "${currentTier}"! Até onde você consegue chegar?`;
-    const shareUrl = `https://abelhando.site/?letras=${sortedChars}&pontos=${letterScore}`;
+    const shareUrl = `${url}?letras=${sortedChars}&pontos=${letterScore}`;
     const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(shareText)}%20${encodeURIComponent(shareUrl)}`;
     window.location.href = whatsappUrl;
 }
@@ -167,8 +168,7 @@ function enableActions(chars, mainChar, wordsList) {
     selectAll(".modal .share").forEach(item => {
         item.addEventListener('click', () => {
             const dataText = "Dê uma olhada nesse jogo! Forme palavras para alcançar o maior nível.";
-            const shareUrl = 'https://abelhando.site';
-            const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(dataText)}%20${encodeURIComponent(shareUrl)}`;
+            const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(dataText)}%20${encodeURIComponent(url)}`;
             window.location.href = whatsappUrl;
         });
     })

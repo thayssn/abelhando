@@ -1,4 +1,4 @@
-const url = 'https://thayssn.github.io/abelhando';
+const url = 'https://abelhando.thays.dev';
 const loadingPhrases = [
     "procurando as letras",
     "se preparando para pousar",
